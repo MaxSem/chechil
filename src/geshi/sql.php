@@ -71,7 +71,7 @@ $language_data = array (
             'DATA', 'DATABASE', 'DATABASES', 'DATE', 'DAY', 'DEC', 'DECIMAL', 'DECLARE',
             'DEFAULT', 'DELAYED', 'DELETE', 'DESC', 'DESCRIBE', 'DISTINCT', 'DOUBLE',
             'DOMAIN', 'DROP',
-            'ELSE', 'ENCLOSED', 'END', 'ESCAPED', 'EXCEPT', 'EXEC', 'EXECUTE', 'EXISTS', 'EXP',
+            'ELSE', 'ELSEIF', 'ENCLOSED', 'END', 'ESCAPED', 'EXCEPT', 'EXEC', 'EXECUTE', 'EXISTS', 'EXP',
             'EXPLAIN', 'EXTRACT',
             'FALSE', 'FIELD', 'FIELDS', 'FILTER', 'FIRST', 'FLOAT', 'FLOOR', 'FLUSH', 'FOR',
             'FOREIGN', 'FROM', 'FULL', 'FUNCTION',
