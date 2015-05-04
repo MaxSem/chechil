@@ -1,20 +1,14 @@
 {
-    "name": "geshi/geshi",
-    "description": "Generic Syntax Highlighter",
+    "name": "<not published yet>/shishishi",
+    "description": "PHP Syntax Highlighter",
     "license": "GPL-2.0+",
-    "homepage": "http://qbnz.com/highlighter/",
+    "homepage": "https://github.com/MaxSem/shishishi",
     "authors": [
         {
-            "name": "Benny Baumann",
-            "email": "BenBE@geshi.org",
-            "homepage": "http://blog.benny-baumann.de/",
-            "role": "Developer"
+            "name": "Max Semenik",
         }
     ],
     "support": {
-        "forum": "https://lists.sourceforge.net/lists/listinfo/geshi-users",
-        "irc": "irc://irc.freenode.org/geshi",
-        "issues": "https://sourceforge.net/p/geshi/feature-requests/"
     },
     "autoload": {
         "classmap": ["src/geshi/", "src/geshi.php"]
