@@ -15,4 +15,4 @@ I wanted to name it [shishishi](https://en.wikipedia.org/wiki/Lion-Eating_Poet_i
 License
 -------
 Chechil is free software, released under the GNU GPL. Please see the COPYING file for more information.
-When contributing new code please don't add your personal copyright to copyright headers beacuse this is detrimental to the idea of shared code ownership. Instead, just write "Copyright <year>" or "Copyright <year> Chechil contributors".
+When contributing new code please don't add your personal copyright to copyright headers beacuse this is detrimental to the idea of shared code ownership. Instead, just write "Copyright [year]" or "Copyright [year] Chechil contributors".
