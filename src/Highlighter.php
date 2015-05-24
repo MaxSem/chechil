@@ -267,9 +267,10 @@ class Highlighter {
 
     /**
      * Whether to use CSS classes in output
+     * @deprecated: Will die as soon as we have a unit test suite. Always forced to true meanwhile.
      * @var boolean
      */
-    var $use_classes = false;
+    private $use_classes = true;
 
     /**
      * The type of header to use. Can be one of the following
@@ -833,17 +834,6 @@ class Highlighter {
      */
     function set_overall_id($id) {
         $this->overall_id = $id;
-    }
-
-    /**
-     * Sets whether CSS classes should be used to highlight the source. Default
-     * is off, calling this method with no arguments will turn it on
-     *
-     * @param boolean $flag Whether to turn classes on or not
-     * @since 1.0.0
-     */
-    function enable_classes($flag = true) {
-        $this->use_classes = ($flag) ? true : false;
     }
 
     /**
