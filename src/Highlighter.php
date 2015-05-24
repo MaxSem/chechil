@@ -27,6 +27,8 @@
  *
  */
 
+namespace Chechil;
+
 //
 // GeSHi Constants
 // You should use these constant names in your programs instead of
@@ -34,8 +36,6 @@
 // version
 //
 
-/** The version of this GeSHi file */
-define('GESHI_VERSION', '1.0.8.12');
 
 // Define the root directory for the GeSHi code tree
 if (!defined('GESHI_ROOT')) {
@@ -101,14 +101,6 @@ define('GESHI_HOVER', 1);
 define('GESHI_ACTIVE', 2);
 /** Links in the source in the :visited state */
 define('GESHI_VISITED', 3);
-
-// Important string starter/finisher
-// Note that if you change these, they should be as-is: i.e., don't
-// write them as if they had been run through htmlentities()
-/** The starter for important parts of the source */
-define('GESHI_START_IMPORTANT', '<BEGIN GeSHi>');
-/** The ender for important parts of the source */
-define('GESHI_END_IMPORTANT', '<END GeSHi>');
 
 /**#@+
  *  @access private
@@ -204,8 +196,6 @@ define('GESHI_ERROR_INVALID_HEADER_TYPE', 4);
 /** The line number type passed to {@link GeSHi->enable_line_numbers()} was invalid */
 define('GESHI_ERROR_INVALID_LINE_NUMBER_TYPE', 5);
 /**#@-*/
-
-namespace Chechil;
 
 /**
  * The highlighter Class.
@@ -352,23 +342,6 @@ class Highlighter {
      * @var array
      */
     var $link_styles = array();
-
-    /**
-     * Whether important blocks should be recognised or not
-     * @var boolean
-     * @deprecated
-     * @todo REMOVE THIS FUNCTIONALITY!
-     */
-    var $enable_important_blocks = false;
-
-    /**
-     * Styles for important parts of the code
-     * @var string
-     * @deprecated
-     * @todo As above - rethink the whole idea of important blocks as it is buggy and
-     * will be hard to implement in 1.2
-     */
-    var $important_styles = 'font-weight: bold; color: red;'; // Styles for important parts of the code
 
     /**
      * Whether CSS IDs should be added to the code
@@ -1421,9 +1394,6 @@ class Highlighter {
                 $this->lexic_permissions[$key] = $flag;
             }
         }
-
-        // Context blocks
-        $this->enable_important_blocks = $flag;
     }
 
     /**
@@ -1764,28 +1734,6 @@ class Highlighter {
         } else {
             $this->link_target = ' target="' . $target . '"';
         }
-    }
-
-    /**
-     * Sets styles for important parts of the code
-     *
-     * @param string $styles The styles to use on important parts of the code
-     * @since 1.0.2
-     */
-    function set_important_styles($styles) {
-        $this->important_styles = $styles;
-    }
-
-    /**
-     * Sets whether context-important blocks are highlighted
-     *
-     * @param bool $flag Tells whether to enable or disable highlighting of important blocks
-     * @todo REMOVE THIS SHIZ FROM GESHI!
-     * @deprecated
-     * @since 1.0.2
-     */
-    function enable_important_blocks($flag) {
-        $this->enable_important_blocks = ( $flag ) ? true : false;
     }
 
     /**
@@ -2178,12 +2126,6 @@ class Highlighter {
         $COMMENT_MATCHED  = false;
         $stuff_to_parse   = '';
         $endresult        = '';
-
-        // "Important" selections are handled like multiline comments
-        // @todo GET RID OF THIS SHIZ
-        if ($this->enable_important_blocks) {
-            $this->language_data['COMMENT_MULTI'][GESHI_START_IMPORTANT] = GESHI_END_IMPORTANT;
-        }
 
         if ($this->strict_mode) {
             // Break the source into bits. Each bit will be a portion of the code
@@ -2819,7 +2761,6 @@ class Highlighter {
                             $comment = $comment_regexp_cache_per_key[$next_comment_regexp_key];
                             $test_str = $this->hsc(substr($part, $i, $comment['length']));
 
-                            //@todo If remove important do remove here
                             if ($this->lexic_permissions['COMMENTS']['MULTI']) {
                                 if (!$this->use_classes) {
                                     $attributes = ' style="' . $this->language_data['STYLES']['COMMENTS'][$comment['key']] . '"';
@@ -2884,27 +2825,14 @@ class Highlighter {
                                 $close_strlen = strlen($close);
                                 $COMMENT_MATCHED = true;
                                 $test_str_match = $open;
-                                //@todo If remove important do remove here
-                                if ($this->lexic_permissions['COMMENTS']['MULTI'] ||
-                                    $open == GESHI_START_IMPORTANT) {
-                                    if ($open != GESHI_START_IMPORTANT) {
-                                        if (!$this->use_classes) {
-                                            $attributes = ' style="' . $this->language_data['STYLES']['COMMENTS']['MULTI'] . '"';
-                                        } else {
-                                            $attributes = ' class="coMULTI"';
-                                        }
-                                        $test_str = "<span$attributes>" . $this->hsc($open);
-                                    } else {
-                                        if (!$this->use_classes) {
-                                            $attributes = ' style="' . $this->important_styles . '"';
-                                        } else {
-                                            $attributes = ' class="imp"';
-                                        }
 
-                                        // We don't include the start of the comment if it's an
-                                        // "important" part
-                                        $test_str = "<span$attributes>";
+                                if ($this->lexic_permissions['COMMENTS']['MULTI']) {
+                                    if (!$this->use_classes) {
+                                        $attributes = ' style="' . $this->language_data['STYLES']['COMMENTS']['MULTI'] . '"';
+                                    } else {
+                                        $attributes = ' class="coMULTI"';
                                     }
+                                    $test_str = "<span$attributes>" . $this->hsc($open);
                                 } else {
                                     $test_str = $this->hsc($open);
                                 }
@@ -2917,10 +2845,7 @@ class Highlighter {
 
                                 // Short-cut through all the multiline code
                                 $rest_of_comment = $this->hsc(substr($part, $i + $open_strlen, $close_pos - $i - $open_strlen + $close_strlen));
-                                if (($this->lexic_permissions['COMMENTS']['MULTI'] ||
-                                    $test_str_match == GESHI_START_IMPORTANT) &&
-                                    $check_linenumbers) {
-
+                                if ($this->lexic_permissions['COMMENTS']['MULTI'] && $check_linenumbers) {
                                     // strreplace to put close span and open span around multiline newlines
                                     $test_str .= str_replace(
                                         "\n", "</span>\n<span$attributes>",
@@ -2930,8 +2855,7 @@ class Highlighter {
                                     $test_str .= $rest_of_comment;
                                 }
 
-                                if ($this->lexic_permissions['COMMENTS']['MULTI'] ||
-                                    $test_str_match == GESHI_START_IMPORTANT) {
+                                if ($this->lexic_permissions['COMMENTS']['MULTI']) {
                                     $test_str .= '</span>';
                                 }
 
@@ -3797,13 +3721,6 @@ class Highlighter {
      * @access private
      */
     function finalise(&$parsed_code) {
-        // Remove end parts of important declarations
-        // This is BUGGY!! My fault for bad code: fix coming in 1.2
-        // @todo Remove this crap
-        if ($this->enable_important_blocks &&
-            (strpos($parsed_code, $this->hsc(GESHI_START_IMPORTANT)) === false)) {
-            $parsed_code = str_replace($this->hsc(GESHI_END_IMPORTANT), '', $parsed_code);
-        }
 
         // Add HTML whitespace stuff if we're using the <div> header
         if ($this->header_type != GESHI_HEADER_PRE && $this->header_type != GESHI_HEADER_PRE_VALID) {
@@ -4400,12 +4317,6 @@ class Highlighter {
         }
         if ($this->footer_content_style != '') {
             $stylesheet .= "$selector.foot {{$this->footer_content_style}}\n";
-        }
-
-        // Styles for important stuff
-        // note: neglect economy_mode, empty styles are meaningless
-        if ($this->important_styles != '') {
-            $stylesheet .= "$selector.imp {{$this->important_styles}}\n";
         }
 
         // Simple line number styles
