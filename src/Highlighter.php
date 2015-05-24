@@ -1,17 +1,13 @@
 <?php
 /**
- * GeSHi - Generic Syntax Highlighter
- *
- * The GeSHi class for Generic Syntax Highlighting. Please refer to the
- * documentation at http://qbnz.com/highlighter/documentation.php for more
- * information about how to use this class.
+ * Chechil highlighter
  *
  * For changes, release notes, TODOs etc, see the relevant files in the docs/
  * directory.
  *
- *   This file is part of GeSHi.
+ *   This file is part of Chechil
  *
- *  GeSHi is free software; you can redistribute it and/or modify
+ *  Chechil is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
@@ -25,8 +21,6 @@
  *  along with GeSHi; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * @package    geshi
- * @subpackage core
  * @author     Nigel McNie <nigel@geshi.org>, Benny Baumann <BenBE@omorphia.de>
  * @copyright  (C) 2004 - 2007 Nigel McNie, (C) 2007 - 2014 Benny Baumann
  * @license    http://gnu.org/copyleft/gpl.html GNU GPL
@@ -149,39 +143,6 @@ define('GESHI_CLASS', 5);
 /** Used in language files to mark comments */
 define('GESHI_COMMENTS', 0);
 
-/** Used to work around missing PHP features **/
-define('GESHI_PHP_PRE_433', !(version_compare(PHP_VERSION, '4.3.3') === 1));
-
-/** make sure we can call stripos **/
-if (!function_exists('stripos')) {
-    // the offset param of preg_match is not supported below PHP 4.3.3
-    if (GESHI_PHP_PRE_433) {
-        /**
-         * @ignore
-         */
-        function stripos($haystack, $needle, $offset = null) {
-            if (!is_null($offset)) {
-                $haystack = substr($haystack, $offset);
-            }
-            if (preg_match('/'. preg_quote($needle, '/') . '/', $haystack, $match, PREG_OFFSET_CAPTURE)) {
-                return $match[0][1];
-            }
-            return false;
-        }
-    }
-    else {
-        /**
-         * @ignore
-         */
-        function stripos($haystack, $needle, $offset = null) {
-            if (preg_match('/'. preg_quote($needle, '/') . '/', $haystack, $match, PREG_OFFSET_CAPTURE, $offset)) {
-                return $match[0][1];
-            }
-            return false;
-        }
-    }
-}
-
 /** some old PHP / PCRE subpatterns only support up to xxx subpatterns in
     regular expressions. Set this to false if your PCRE lib is up to date
     @see GeSHi->optimize_regexp_list()
@@ -244,9 +205,10 @@ define('GESHI_ERROR_INVALID_HEADER_TYPE', 4);
 define('GESHI_ERROR_INVALID_LINE_NUMBER_TYPE', 5);
 /**#@-*/
 
+namespace Chechil;
 
 /**
- * The GeSHi Class.
+ * The highlighter Class.
  *
  * Please refer to the documentation for GeSHi 1.0.X that is available
  * at http://qbnz.com/highlighter/documentation.php for more information
@@ -256,7 +218,12 @@ define('GESHI_ERROR_INVALID_LINE_NUMBER_TYPE', 5);
  * @author    Nigel McNie <nigel@geshi.org>, Benny Baumann <BenBE@omorphia.de>
  * @copyright (C) 2004 - 2007 Nigel McNie, (C) 2007 - 2014 Benny Baumann
  */
-class GeSHi {
+class Highlighter {
+    /**
+     * Chechil version
+     */
+    const VERSION = '0.9';
+
     /**#@+
      * @access private
      */
@@ -594,7 +561,7 @@ class GeSHi {
      *               {@link GeSHi->set_language_path()}
      * @since 1.0.0
      */
-    function GeSHi($source = '', $language = '', $path = '') {
+    function __construct($source = '', $language = '', $path = '') {
         if ($source !== '' ) {
             $this->set_source($source);
         }
@@ -608,11 +575,11 @@ class GeSHi {
      * Returns the version of GeSHi
      *
      * @return string
-     * @since 1 0.8.11
+     *
      */
     function get_version()
     {
-        return GESHI_VERSION;
+        return self::VERSION;
     }
 
     /**
@@ -2274,8 +2241,7 @@ class GeSHi {
                          *  - Group 1 is the opener
                          *  - Group 2 is the closer
                          */
-                        if(!GESHI_PHP_PRE_433 && //Needs proper rewrite to work with PHP >=4.3.0; 4.3.3 is guaranteed to work.
-                            preg_match($delimiters, $code, $matches_rx, PREG_OFFSET_CAPTURE, $i)) {
+                        if(preg_match($delimiters, $code, $matches_rx, PREG_OFFSET_CAPTURE, $i)) {
                             //We got a match ...
                             if(isset($matches_rx['start']) && isset($matches_rx['end']))
                             {
@@ -2522,15 +2488,8 @@ class GeSHi {
                                     continue;
                                 }
                                 $match_i = $comment_regexp_cache_per_key[$comment_key]['pos'];
-                            } elseif (
-                                //This is to allow use of the offset parameter in preg_match and stay as compatible with older PHP versions as possible
-                                (GESHI_PHP_PRE_433 && preg_match($regexp, substr($part, $i), $match, PREG_OFFSET_CAPTURE)) ||
-                                (!GESHI_PHP_PRE_433 && preg_match($regexp, $part, $match, PREG_OFFSET_CAPTURE, $i))
-                                ) {
+                            } elseif ( preg_match($regexp, $part, $match, PREG_OFFSET_CAPTURE, $i) ) {
                                 $match_i = $match[0][1];
-                                if (GESHI_PHP_PRE_433) {
-                                    $match_i += $i;
-                                }
 
                                 $comment_regexp_cache_per_key[$comment_key] = array(
                                     'key' => $comment_key,
@@ -2630,15 +2589,8 @@ class GeSHi {
                                                 continue;
                                             }
                                             $match_i = $escape_regexp_cache_per_key[$escape_key]['pos'];
-                                        } elseif (
-                                            //This is to allow use of the offset parameter in preg_match and stay as compatible with older PHP versions as possible
-                                            (GESHI_PHP_PRE_433 && preg_match($regexp, substr($part, $start), $match, PREG_OFFSET_CAPTURE)) ||
-                                            (!GESHI_PHP_PRE_433 && preg_match($regexp, $part, $match, PREG_OFFSET_CAPTURE, $start))
-                                            ) {
+                                        } elseif (preg_match($regexp, $part, $match, PREG_OFFSET_CAPTURE, $start)) {
                                             $match_i = $match[0][1];
-                                            if (GESHI_PHP_PRE_433) {
-                                                $match_i += $start;
-                                            }
 
                                             $escape_regexp_cache_per_key[$escape_key] = array(
                                                 'key' => $escape_key,
@@ -2701,28 +2653,8 @@ class GeSHi {
                                     $string .= "</span>\n";
                                     $start = $es_pos + 2;
                                 } elseif (ord($es_char) >= 128) {
-                                    //This is an non-ASCII char (UTF8 or single byte)
-                                    //This code tries to work around SF#2037598 ...
-                                    if(function_exists('mb_substr')) {
-                                        $es_char_m = mb_substr(substr($part, $es_pos+1, 16), 0, 1, $this->encoding);
-                                        $string .= $es_char_m . '</span>';
-                                    } elseif (!GESHI_PHP_PRE_433 && 'utf-8' == $this->encoding) {
-                                        if(preg_match("/[\xC2-\xDF][\x80-\xBF]".
-                                            "|\xE0[\xA0-\xBF][\x80-\xBF]".
-                                            "|[\xE1-\xEC\xEE\xEF][\x80-\xBF]{2}".
-                                            "|\xED[\x80-\x9F][\x80-\xBF]".
-                                            "|\xF0[\x90-\xBF][\x80-\xBF]{2}".
-                                            "|[\xF1-\xF3][\x80-\xBF]{3}".
-                                            "|\xF4[\x80-\x8F][\x80-\xBF]{2}/s",
-                                            $part, $es_char_m, null, $es_pos + 1)) {
-                                            $es_char_m = $es_char_m[0];
-                                        } else {
-                                            $es_char_m = $es_char;
-                                        }
-                                        $string .= $this->hsc($es_char_m) . '</span>';
-                                    } else {
-                                        $es_char_m = $this->hsc($es_char);
-                                    }
+                                    $es_char_m = mb_substr(substr($part, $es_pos+1, 16), 0, 1, $this->encoding);
+									$string .= $es_char_m . '</span>';
                                     $start = $es_pos + strlen($es_char_m) + 1;
                                 } else {
                                     $string .= $this->hsc($es_char) . '</span>';
@@ -4258,7 +4190,7 @@ class GeSHi {
 
         $keywords[] = '<VERSION>';
         $keywords[] = '{VERSION}';
-        $replacements[] = $replacements[] = GESHI_VERSION;
+        $replacements[] = $replacements[] = self::VERSION;
 
         $keywords[] = '<SPEED>';
         $keywords[] = '{SPEED}';
@@ -4766,35 +4698,5 @@ class GeSHi {
         }
         // return $list without trailing pipe
         return substr($list, 0, -1);
-    }
-} // End Class GeSHi
-
-
-if (!function_exists('geshi_highlight')) {
-    /**
-     * Easy way to highlight stuff. Behaves just like highlight_string
-     *
-     * @param string $string The code to highlight
-     * @param string $language The language to highlight the code in
-     * @param string $path The path to the language files. You can leave this blank if you need
-     *               as from version 1.0.7 the path should be automatically detected
-     * @param boolean $return Whether to return the result or to echo
-     * @return string The code highlighted (if $return is true)
-     * @since 1.0.2
-     */
-    function geshi_highlight($string, $language, $path = null, $return = false) {
-        $geshi = new GeSHi($string, $language, $path);
-        $geshi->set_header_type(GESHI_HEADER_NONE);
-
-        if ($return) {
-            return '<code>' . $geshi->parse_code() . '</code>';
-        }
-
-        echo '<code>' . $geshi->parse_code() . '</code>';
-
-        if ($geshi->error()) {
-            return false;
-        }
-        return true;
     }
 }
