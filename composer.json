@@ -5,12 +5,15 @@
     "homepage": "https://github.com/MaxSem/shishishi",
     "authors": [
         {
-            "name": "Max Semenik",
+            "name": "Max Semenik"
         }
     ],
+    "require": {
+        "php": ">=5.3"
+    },
     "support": {
     },
     "autoload": {
-        "classmap": ["src/geshi/", "src/geshi.php"]
+        "classmap": ["src/geshi/", "src/Highlighter.php"]
     }
 }

@@ -1915,7 +1915,7 @@ class Highlighter {
             foreach ($this->language_data['SYMBOLS'] as $key => $symbols) {
                 if (is_array($symbols)) {
                     foreach ($symbols as $sym) {
-                        $sym = $this->hsc($sym);
+                        $sym = self::hsc($sym);
                         if (!isset($this->language_data['SYMBOL_DATA'][$sym])) {
                             $this->language_data['SYMBOL_DATA'][$sym] = $key;
                             if (isset($sym[1])) { // multiple chars
@@ -1931,7 +1931,7 @@ class Highlighter {
                         }
                     }
                 } else {
-                    $symbols = $this->hsc($symbols);
+                    $symbols = self::hsc($symbols);
                     if (!isset($this->language_data['SYMBOL_DATA'][$symbols])) {
                         $this->language_data['SYMBOL_DATA'][$symbols] = 0;
                         if (isset($symbols[1])) { // multiple chars
@@ -2094,7 +2094,7 @@ class Highlighter {
         // Firstly, if there is an error, we won't highlight
         if ($this->error) {
             //Escape the source for output
-            $result = $this->hsc($this->source);
+            $result = self::hsc($this->source);
 
             //This fix is related to SF#1923020, but has to be applied regardless of
             //actually highlighting symbols.
@@ -2311,7 +2311,7 @@ class Highlighter {
             !empty($this->highlight_extra_lines) || !$this->allow_multiline_span;
 
         //preload the escape char for faster checking ...
-        $escaped_escape_char = $this->hsc($this->language_data['ESCAPE_CHAR']);
+        $escaped_escape_char = self::hsc($this->language_data['ESCAPE_CHAR']);
 
         // this is used for single-line comments
         $sc_disallowed_before = "";
@@ -2353,7 +2353,7 @@ class Highlighter {
             // If this block should be highlighted...
             if (!($key & 1)) {
                 // Else not a block to highlight
-                $endresult .= $this->hsc($parts[$key][1]);
+                $endresult .= self::hsc($parts[$key][1]);
                 unset($parts[$key]);
                 continue;
             }
@@ -2491,7 +2491,7 @@ class Highlighter {
                         }
 
                         // now handle the string
-                        $string = "<span$string_attributes>" . GeSHi::hsc($char);
+                        $string = "<span$string_attributes>" . self::hsc($char);
                         $start = $i + $char_len;
                         $string_open = true;
 
@@ -2565,7 +2565,7 @@ class Highlighter {
                                 $es_pos = $simple_escape;
 
                                 //Add the stuff not in the string yet ...
-                                $string .= $this->hsc(substr($part, $start, $es_pos - $start));
+                                $string .= self::hsc(substr($part, $start, $es_pos - $start));
 
                                 //Get the style for this escaped char ...
                                 if (!$this->use_classes) {
@@ -2589,14 +2589,14 @@ class Highlighter {
 									$string .= $es_char_m . '</span>';
                                     $start = $es_pos + strlen($es_char_m) + 1;
                                 } else {
-                                    $string .= $this->hsc($es_char) . '</span>';
+                                    $string .= self::hsc($es_char) . '</span>';
                                     $start = $es_pos + 2;
                                 }
                             } elseif ($next_escape_regexp_pos < $length &&
                                 $next_escape_regexp_pos < $close_pos) {
                                 $es_pos = $next_escape_regexp_pos;
                                 //Add the stuff not in the string yet ...
-                                $string .= $this->hsc(substr($part, $start, $es_pos - $start));
+                                $string .= self::hsc(substr($part, $start, $es_pos - $start));
 
                                 //Get the key and length of this match ...
                                 $escape = $escape_regexp_cache_per_key[$next_escape_regexp_key];
@@ -2612,12 +2612,12 @@ class Highlighter {
 
                                 //Add the style for the escape char ...
                                 $string .= "<span$escape_char_attributes>" .
-                                    $this->hsc($escape_str) . '</span>';
+                                    self::hsc($escape_str) . '</span>';
 
                                 $start = $es_pos + $escape['length'];
                             } else {
                                 //Copy the remainder of the string ...
-                                $string .= $this->hsc(substr($part, $start, $close_pos - $start + $char_len)) . '</span>';
+                                $string .= self::hsc(substr($part, $start, $close_pos - $start + $char_len)) . '</span>';
                                 $start = $close_pos + $char_len;
                                 $string_open = false;
                             }
@@ -2697,13 +2697,13 @@ class Highlighter {
                             $new_string = '';
                             while ($es_pos = strpos($string, $this->language_data['ESCAPE_CHAR'], $start)) {
                                 // hmtl escape stuff before
-                                $new_string .= $this->hsc(substr($string, $start, $es_pos - $start));
+                                $new_string .= self::hsc(substr($string, $start, $es_pos - $start));
                                 // check if this is a hard escape
                                 foreach ($this->language_data['HARDESCAPE'] as $hardescape) {
                                     if (substr($string, $es_pos, strlen($hardescape)) == $hardescape) {
                                         // indeed, this is a hardescape
                                         $new_string .= "<span$escape_char_attributes>" .
-                                            $this->hsc($hardescape) . '</span>';
+                                            self::hsc($hardescape) . '</span>';
                                         $start = $es_pos + strlen($hardescape);
                                         continue 2;
                                     }
@@ -2727,9 +2727,9 @@ class Highlighter {
                                     $start = $es_pos + 1;
                                 }
                             }
-                            $string = $new_string . $this->hsc(substr($string, $start));
+                            $string = $new_string . self::hsc(substr($string, $start));
                         } else {
-                            $string = $this->hsc($string);
+                            $string = self::hsc($string);
                         }
 
                         if ($check_linenumbers) {
@@ -2749,7 +2749,7 @@ class Highlighter {
                         if ($i == $next_comment_regexp_pos) {
                             $COMMENT_MATCHED = true;
                             $comment = $comment_regexp_cache_per_key[$next_comment_regexp_key];
-                            $test_str = $this->hsc(substr($part, $i, $comment['length']));
+                            $test_str = self::hsc(substr($part, $i, $comment['length']));
 
                             if ($this->lexic_permissions['COMMENTS']['MULTI']) {
                                 if (!$this->use_classes) {
@@ -2822,9 +2822,9 @@ class Highlighter {
                                     } else {
                                         $attributes = ' class="coMULTI"';
                                     }
-                                    $test_str = "<span$attributes>" . $this->hsc($open);
+                                    $test_str = "<span$attributes>" . self::hsc($open);
                                 } else {
-                                    $test_str = $this->hsc($open);
+                                    $test_str = self::hsc($open);
                                 }
 
                                 $close_pos = strpos( $part, $close, $i + $open_strlen );
@@ -2834,7 +2834,7 @@ class Highlighter {
                                 }
 
                                 // Short-cut through all the multiline code
-                                $rest_of_comment = $this->hsc(substr($part, $i + $open_strlen, $close_pos - $i - $open_strlen + $close_strlen));
+                                $rest_of_comment = self::hsc(substr($part, $i + $open_strlen, $close_pos - $i - $open_strlen + $close_strlen));
                                 if ($this->lexic_permissions['COMMENTS']['MULTI'] && $check_linenumbers) {
                                     // strreplace to put close span and open span around multiline newlines
                                     $test_str .= str_replace(
@@ -2914,9 +2914,9 @@ class Highlighter {
                                         } else {
                                             $attributes = ' class="co' . $comment_key . '"';
                                         }
-                                        $test_str = "<span$attributes>" . $this->hsc($this->change_case($comment_mark));
+                                        $test_str = "<span$attributes>" . self::hsc($this->change_case($comment_mark));
                                     } else {
-                                        $test_str = $this->hsc($comment_mark);
+                                        $test_str = self::hsc($comment_mark);
                                     }
 
                                     //Check if this comment is the last in the source
@@ -2926,7 +2926,7 @@ class Highlighter {
                                         $close_pos = $length;
                                         $oops = true;
                                     }
-                                    $test_str .= $this->hsc(substr($part, $i + $com_len, $close_pos - $i - $com_len));
+                                    $test_str .= self::hsc(substr($part, $i + $com_len, $close_pos - $i - $com_len));
                                     if ($this->lexic_permissions['COMMENTS'][$comment_key]) {
                                         $test_str .= "</span>";
                                     }
@@ -2959,7 +2959,7 @@ class Highlighter {
                 $result .= $this->parse_non_string_part($stuff_to_parse);
                 $stuff_to_parse = '';
             } else {
-                $result .= $this->hsc($part);
+                $result .= self::hsc($part);
             }
             // Close the <span> that surrounds the block
             if ($STRICTATTRS != '') {
@@ -3155,9 +3155,9 @@ class Highlighter {
                             '{FNAMEU}',
                             '.'),
                         array(
-                            str_replace('+', '%20', urlencode($this->hsc($word))),
-                            str_replace('+', '%20', urlencode($this->hsc(strtolower($word)))),
-                            str_replace('+', '%20', urlencode($this->hsc(strtoupper($word)))),
+                            str_replace('+', '%20', urlencode(self::hsc($word))),
+                            str_replace('+', '%20', urlencode(self::hsc(strtolower($word)))),
+                            str_replace('+', '%20', urlencode(self::hsc(strtoupper($word)))),
                             '<DOT>'),
                         $this->language_data['URLS'][$k]
                     ) . '">';
@@ -3228,7 +3228,7 @@ class Highlighter {
      * @return string
      */
     function parse_non_string_part($stuff_to_parse) {
-        $stuff_to_parse = ' ' . $this->hsc($stuff_to_parse);
+        $stuff_to_parse = ' ' . self::hsc($stuff_to_parse);
 
         // Highlight keywords
         $disallowed_before = "(?<![a-zA-Z0-9\$_\|\#|^&";
@@ -4169,7 +4169,7 @@ class Highlighter {
      * @return      string  converted string
      * @since       1.0.7.18
      */
-    function hsc($string, $quote_style = ENT_COMPAT) {
+    private static function hsc($string, $quote_style = ENT_COMPAT) {
         // init
         static $aTransSpecchar = array(
             '&' => '&amp;',

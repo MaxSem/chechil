@@ -1,0 +1,23 @@
+#include <iostream>
+#include <cstdio>
+
+#ifndef FAIL
+typedef int INT;
+#endif
+
+class Goodbye {
+    ~Goodbye() {
+        // Outputting, the boring way <script>alert('XSS')</script>
+        std::cout << "Good bye, world!" << std::endl;
+    }
+} goodbye;
+
+INT main(int argc, char **argv) {
+    /* Outputting,
+        the
+            awesome
+                old
+                    way */
+    printf("Hello, world!\n");
+    return 1;
+}

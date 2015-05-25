@@ -1,0 +1,24 @@
+<pre class="cpp"><span class="co2">#include &lt;iostream&gt;</span>
+<span class="co2">#include &lt;cstdio&gt;</span>
+&nbsp;
+<span class="co2">#ifndef FAIL</span>
+<span class="kw4">typedef</span> <span class="kw4">int</span> INT<span class="sy4">;</span>
+<span class="co2">#endif</span>
+&nbsp;
+<span class="kw2">class</span> Goodbye <span class="br0">&#123;</span>
+    ~Goodbye<span class="br0">&#40;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+        <span class="co1">// Outputting, the boring way &lt;script&gt;alert('XSS')&lt;/script&gt;</span>
+        std<span class="sy4">::</span><span class="kw3">cout</span> <span class="sy1">&lt;&lt;</span> <span class="st0">&quot;Good bye, world!&quot;</span> <span class="sy1">&lt;&lt;</span> std<span class="sy4">::</span><span class="me2">endl</span><span class="sy4">;</span>
+    <span class="br0">&#125;</span>
+<span class="br0">&#125;</span> goodbye<span class="sy4">;</span>
+&nbsp;
+INT main<span class="br0">&#40;</span><span class="kw4">int</span> argc, <span class="kw4">char</span> <span class="sy2">**</span>argv<span class="br0">&#41;</span> <span class="br0">&#123;</span>
+    <span class="coMULTI">/* Outputting,
+        the
+            awesome
+                old
+                    way */</span>
+    <span class="kw3">printf</span><span class="br0">&#40;</span><span class="st0">&quot;Hello, world!<span class="es1">\n</span>&quot;</span><span class="br0">&#41;</span><span class="sy4">;</span>
+    <span class="kw1">return</span> <span class="nu0">1</span><span class="sy4">;</span>
+<span class="br0">&#125;</span>
+&nbsp;</pre>

@@ -2,3 +2,5 @@ dist
 build.properties
 *.swp
 .idea
+composer.lock
+vendor/
