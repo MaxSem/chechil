@@ -1,5 +1,5 @@
 {
-    "name": "<not published yet>/shishishi",
+    "name": "<not published yet>/chechil",
     "description": "PHP Syntax Highlighter",
     "license": "GPL-2.0+",
     "homepage": "https://github.com/MaxSem/shishishi",
@@ -14,6 +14,6 @@
     "support": {
     },
     "autoload": {
-        "classmap": ["src/geshi/", "src/Highlighter.php"]
+        "classmap": ["src/"]
     }
 }

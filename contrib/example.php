@@ -15,20 +15,17 @@ error_reporting(E_ALL);
 // Rudimentary checking of where GeSHi is. In a default install it will be in ../, but
 // it could be in the current directory if the include_path is set. There's nowhere else
 // we can reasonably guess.
-if (is_readable('../geshi.php')) {
-    $path = '../';
+if (is_readable('../vendor/autoload.php')) {
+    $path = '../vendor/';
 } elseif (is_readable('geshi.php')) {
     $path = './';
 } else {
     die('Could not find geshi.php - make sure it is in your include path!');
 }
-require $path . 'geshi.php';
+require $path . 'autoload.php';
 
 $fill_source = false;
 if (isset($_POST['submit'])) {
-    if (get_magic_quotes_gpc()) {
-        $_POST['source'] = stripslashes($_POST['source']);
-    }
     if (!strlen(trim($_POST['source']))) {
         $_POST['language'] = preg_replace('#[^a-zA-Z0-9\-_]#', '', $_POST['language']);
         $_POST['source'] = implode('', @file($path . 'geshi/' . $_POST['language'] . '.php'));
@@ -43,7 +40,7 @@ if (isset($_POST['submit'])) {
     // you sanitise correctly if you use $_POST of course - this very script has had a security
     // advisory against it in the past because of this. Please try not to use this script on a
     // live site.
-    $geshi = new GeSHi($_POST['source'], $_POST['language']);
+    $geshi = new Chechil\Highlighter($_POST['source'], 'php'/*$_POST['language']*/);
 
     // Use the PRE_VALID header. This means less output source since we don't have to output &nbsp;
     // everywhere. Of course it also means you can't set the tab width.
@@ -52,10 +49,6 @@ if (isset($_POST['submit'])) {
     // HEADER_DIV puts a <div> tag arount the list (valid!) but needs to replace whitespaces with &nbsp
     //            thus producing much larger overhead. You can set the tab width though.
     $geshi->set_header_type(GESHI_HEADER_PRE_VALID);
-
-    // Enable CSS classes. You can use get_stylesheet() to output a stylesheet for your code. Using
-    // CSS classes results in much less output source.
-    $geshi->enable_classes();
 
     // Enable line numbers. We want fancy line numbers, and we want every 5th line number to be fancy
     $geshi->enable_line_numbers(GESHI_FANCY_LINE_NUMBERS, 5);

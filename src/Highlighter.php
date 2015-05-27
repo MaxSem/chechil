@@ -37,21 +37,6 @@ namespace Chechil;
 //
 
 
-// Define the root directory for the GeSHi code tree
-if (!defined('GESHI_ROOT')) {
-    /** The root directory for GeSHi */
-    define('GESHI_ROOT', dirname(__FILE__) . DIRECTORY_SEPARATOR);
-}
-/** The language file directory for GeSHi
-    @access private */
-define('GESHI_LANG_ROOT', GESHI_ROOT . 'geshi' . DIRECTORY_SEPARATOR);
-
-// Define if GeSHi should be paranoid about security
-if (!defined('GESHI_SECURITY_PARANOID')) {
-    /** Tells GeSHi to be paranoid about security settings */
-    define('GESHI_SECURITY_PARANOID', false);
-}
-
 // Line numbers - use with enable_line_numbers()
 /** Use no line numbers when building the result */
 define('GESHI_NO_LINE_NUMBERS', 0);
@@ -236,28 +221,11 @@ class Highlighter {
     var $language_data = array();
 
     /**
-     * The path to the language files
-     * @var string
-     */
-    var $language_path = GESHI_LANG_ROOT;
-
-    /**
      * The error message associated with an error
      * @var string
      * @todo check err reporting works
      */
     var $error = false;
-
-    /**
-     * Possible error messages
-     * @var array
-     */
-    var $error_messages = array(
-        GESHI_ERROR_NO_SUCH_LANG => 'GeSHi could not find the language {LANGUAGE} (using path {PATH})',
-        GESHI_ERROR_FILE_NOT_READABLE => 'The file specified for load_from_file was not readable',
-        GESHI_ERROR_INVALID_HEADER_TYPE => 'The header type specified is invalid',
-        GESHI_ERROR_INVALID_LINE_NUMBER_TYPE => 'The line number type specified is invalid'
-    );
 
     /**
      * Whether highlighting is strict or not
@@ -475,9 +443,8 @@ class Highlighter {
     var $keyword_links = true;
 
     /**
-     * Currently loaded language file
+     * Currently loaded language
      * @var string
-     * @since 1.0.7.22
      */
     var $loaded_language = '';
 
@@ -519,6 +486,9 @@ class Highlighter {
     var $_hmr_after = '';
     var $_hmr_key = 0;
 
+    /** @var LanguageCache */
+    private $languageCache = null;
+
     /**#@-*/
 
     /**
@@ -526,13 +496,6 @@ class Highlighter {
      *
      * @param string $source The source code to highlight
      * @param string $language The language to highlight the source with
-     * @param string $path The path to the language file directory. <b>This
-     *               is deprecated!</b> I've backported the auto path
-     *               detection from the 1.1.X dev branch, so now it
-     *               should be automatically set correctly. If you have
-     *               renamed the language directory however, you will
-     *               still need to set the path using this parameter or
-     *               {@link GeSHi->set_language_path()}
      * @since 1.0.0
      */
     function __construct($source = '', $language = '', $path = '') {
@@ -540,9 +503,8 @@ class Highlighter {
             $this->set_source($source);
         }
         if ($language !== '') {
-            $this->set_language($language);
+            $this->setLanguage($language);
         }
-        $this->set_language_path($path);
     }
 
     /**
@@ -554,30 +516,6 @@ class Highlighter {
     function get_version()
     {
         return self::VERSION;
-    }
-
-    /**
-     * Returns an error message associated with the last GeSHi operation,
-     * or false if no error has occurred
-     *
-     * @return string|false An error message if there has been an error, else false
-     * @since  1.0.0
-     */
-    function error() {
-        if ($this->error) {
-            //Put some template variables for debugging here ...
-            $debug_tpl_vars = array(
-                '{LANGUAGE}' => $this->language,
-                '{PATH}' => $this->language_path
-            );
-            $msg = str_replace(
-                array_keys($debug_tpl_vars),
-                array_values($debug_tpl_vars),
-                $this->error_messages[$this->error]);
-
-            return "<br /><strong>GeSHi Error:</strong> $msg (code {$this->error})<br />";
-        }
-        return false;
     }
 
     /**
@@ -612,79 +550,78 @@ class Highlighter {
      *       if you need this set $force_reset = true
      *
      * @param string $language The name of the language to use
-     * @param bool $force_reset
-     * @since 1.0.0
      */
-    function set_language($language, $force_reset = false) {
-        if ($force_reset) {
-            $this->loaded_language = false;
-        }
-
+    function setLanguage($language) {
         //Clean up the language name to prevent malicious code injection
         $language = preg_replace('#[^a-zA-Z0-9\-_]#', '', $language);
 
         $language = strtolower($language);
 
-        //Retreive the full filename
-        $file_name = $this->language_path . $language . '.php';
-        if ($file_name == $this->loaded_language) {
+        if ($language == $this->loaded_language) {
             // this language is already loaded!
             return;
         }
 
         $this->language = $language;
 
-        $this->error = false;
         $this->strict_mode = GESHI_NEVER;
-
-        //Check if we can read the desired file
-        if (!is_readable($file_name)) {
-            $this->error = GESHI_ERROR_NO_SUCH_LANG;
-            return;
-        }
+        $this->parse_cache_built = false;
+        $this->enable_highlighting();
 
         // Load the language for parsing
-        $this->load_language($file_name);
-    }
+        $this->language_data = $this->getLanguageCache()->get($language);
 
-    /**
-     * Sets the path to the directory containing the language files. Note
-     * that this path is relative to the directory of the script that included
-     * geshi.php, NOT geshi.php itself.
-     *
-     * @param string $path The path to the language directory
-     * @since 1.0.0
-     * @deprecated The path to the language files should now be automatically
-     *             detected, so this method should no longer be needed. The
-     *             1.1.X branch handles manual setting of the path differently
-     *             so this method will disappear in 1.2.0.
-     */
-    function set_language_path($path) {
-        if(strpos($path,':')) {
-            //Security Fix to prevent external directories using fopen wrappers.
-            if(DIRECTORY_SEPARATOR == "\\") {
-                if(!preg_match('#^[a-zA-Z]:#', $path) || false !== strpos($path, ':', 2)) {
-                    return;
-                }
+        // Set strict mode if should be set
+        $this->strict_mode = $this->language_data['STRICT_MODE_APPLIES'];
+
+        // Set permissions for all lexics to true
+        // so they'll be highlighted by default
+        foreach (array_keys($this->language_data['KEYWORDS']) as $key) {
+            if (!empty($this->language_data['KEYWORDS'][$key])) {
+                $this->lexic_permissions['KEYWORDS'][$key] = true;
             } else {
-                return;
+                $this->lexic_permissions['KEYWORDS'][$key] = false;
             }
         }
-        if(preg_match('#[^/a-zA-Z0-9_\.\-\\\s:]#', $path)) {
-            //Security Fix to prevent external directories using fopen wrappers.
-            return;
+
+        foreach (array_keys($this->language_data['COMMENT_SINGLE']) as $key) {
+            $this->lexic_permissions['COMMENTS'][$key] = true;
         }
-        if(GESHI_SECURITY_PARANOID && false !== strpos($path, '/.')) {
-            //Security Fix to prevent external directories using fopen wrappers.
-            return;
+        foreach (array_keys($this->language_data['REGEXPS']) as $key) {
+            $this->lexic_permissions['REGEXPS'][$key] = true;
         }
-        if(GESHI_SECURITY_PARANOID && false !== strpos($path, '..')) {
-            //Security Fix to prevent external directories using fopen wrappers.
-            return;
+
+        // for BenBE and future code reviews:
+        // we can use empty here since we only check for existance and emptiness of an array
+        // if it is not an array at all but rather false or null this will work as intended as well
+        // even if $this->language_data['PARSER_CONTROL'] is undefined this won't trigger a notice
+        if (!empty($this->language_data['PARSER_CONTROL']['ENABLE_FLAGS'])) {
+            foreach ($this->language_data['PARSER_CONTROL']['ENABLE_FLAGS'] as $flag => $value) {
+                // it's either true or false and maybe is true as well
+                $perm = $value !== GESHI_NEVER;
+                if ($flag == 'ALL') {
+                    $this->enable_highlighting($perm);
+                    continue;
+                }
+                if (!isset($this->lexic_permissions[$flag])) {
+                    // unknown lexic permission
+                    continue;
+                }
+                if (is_array($this->lexic_permissions[$flag])) {
+                    foreach ($this->lexic_permissions[$flag] as $key => $val) {
+                        $this->lexic_permissions[$flag][$key] = $perm;
+                    }
+                } else {
+                    $this->lexic_permissions[$flag] = $perm;
+                }
+            }
+            unset($this->language_data['PARSER_CONTROL']['ENABLE_FLAGS']);
         }
-        if ($path) {
-            $this->language_path = ('/' == $path[strlen($path) - 1]) ? $path : $path . '/';
-            $this->set_language($this->language); // otherwise set_language_path has no effect
+
+        //Fix: Problem where hardescapes weren't handled if no ESCAPE_CHAR was given
+        //You need to set one for HARDESCAPES only in this case.
+        if(!isset($this->language_data['HARDCHAR'])) {
+            $this->language_data['HARDCHAR'] = $this->language_data['ESCAPE_CHAR'];
         }
     }
 
@@ -695,6 +632,7 @@ class Highlighter {
      */
     function get_supported_languages($full_names=false)
     {
+        //@FIXME: redo
         // return array
         $back = array();
 
@@ -1507,7 +1445,7 @@ class Highlighter {
     function load_from_file($file_name, $lookup = array()) {
         if (is_readable($file_name)) {
             $this->set_source(file_get_contents($file_name));
-            $this->set_language(self::get_language_name_from_extension(substr(strrchr($file_name, '.'), 1), $lookup));
+            $this->setLanguage(self::get_language_name_from_extension(substr(strrchr($file_name, '.'), 1), $lookup));
         } else {
             $this->error = GESHI_ERROR_FILE_NOT_READABLE;
         }
@@ -3604,105 +3542,6 @@ class Highlighter {
     }
 
     /**
-     * Gets language information and stores it for later use
-     *
-     * @param string $file_name The filename of the language file you want to load
-     * @since 1.0.0
-     * @access private
-     * @todo Needs to load keys for lexic permissions for keywords, regexps etc
-     */
-    function load_language($file_name) {
-        if ($file_name == $this->loaded_language) {
-            // this file is already loaded!
-            return;
-        }
-
-        //Prepare some stuff before actually loading the language file
-        $this->loaded_language = $file_name;
-        $this->parse_cache_built = false;
-        $this->enable_highlighting();
-        $language_data = array();
-
-        //Load the language file
-        require $file_name;
-
-        // Perhaps some checking might be added here later to check that
-        // $language data is a valid thing but maybe not
-        $this->language_data = $language_data;
-
-        // Set strict mode if should be set
-        $this->strict_mode = $this->language_data['STRICT_MODE_APPLIES'];
-
-        // Set permissions for all lexics to true
-        // so they'll be highlighted by default
-        foreach (array_keys($this->language_data['KEYWORDS']) as $key) {
-            if (!empty($this->language_data['KEYWORDS'][$key])) {
-                $this->lexic_permissions['KEYWORDS'][$key] = true;
-            } else {
-                $this->lexic_permissions['KEYWORDS'][$key] = false;
-            }
-        }
-
-        foreach (array_keys($this->language_data['COMMENT_SINGLE']) as $key) {
-            $this->lexic_permissions['COMMENTS'][$key] = true;
-        }
-        foreach (array_keys($this->language_data['REGEXPS']) as $key) {
-            $this->lexic_permissions['REGEXPS'][$key] = true;
-        }
-
-        // for BenBE and future code reviews:
-        // we can use empty here since we only check for existance and emptiness of an array
-        // if it is not an array at all but rather false or null this will work as intended as well
-        // even if $this->language_data['PARSER_CONTROL'] is undefined this won't trigger a notice
-        if (!empty($this->language_data['PARSER_CONTROL']['ENABLE_FLAGS'])) {
-            foreach ($this->language_data['PARSER_CONTROL']['ENABLE_FLAGS'] as $flag => $value) {
-                // it's either true or false and maybe is true as well
-                $perm = $value !== GESHI_NEVER;
-                if ($flag == 'ALL') {
-                    $this->enable_highlighting($perm);
-                    continue;
-                }
-                if (!isset($this->lexic_permissions[$flag])) {
-                    // unknown lexic permission
-                    continue;
-                }
-                if (is_array($this->lexic_permissions[$flag])) {
-                    foreach ($this->lexic_permissions[$flag] as $key => $val) {
-                        $this->lexic_permissions[$flag][$key] = $perm;
-                    }
-                } else {
-                    $this->lexic_permissions[$flag] = $perm;
-                }
-            }
-            unset($this->language_data['PARSER_CONTROL']['ENABLE_FLAGS']);
-        }
-
-        //Fix: Problem where hardescapes weren't handled if no ESCAPE_CHAR was given
-        //You need to set one for HARDESCAPES only in this case.
-        if(!isset($this->language_data['HARDCHAR'])) {
-            $this->language_data['HARDCHAR'] = $this->language_data['ESCAPE_CHAR'];
-        }
-
-        //NEW in 1.0.8: Allow styles to be loaded from a separate file to override defaults
-        $style_filename = substr($file_name, 0, -4) . '.style.php';
-        if (is_readable($style_filename)) {
-            //Clear any style_data that could have been set before ...
-            if (isset($style_data)) {
-                unset($style_data);
-            }
-
-            //Read the Style Information from the style file
-            include $style_filename;
-
-            //Apply the new styles to our current language styles
-            if (isset($style_data) && is_array($style_data)) {
-                $this->language_data['STYLES'] =
-                    $this->merge_arrays($this->language_data['STYLES'], $style_data);
-            }
-        }
-    }
-
-    /**
      * Takes the parsed code and various options, and creates the HTML
      * surrounding it to make it look nice.
      *
@@ -4599,5 +4438,26 @@ class Highlighter {
         }
         // return $list without trailing pipe
         return substr($list, 0, -1);
+    }
+
+    /**
+     * Returns language cache currently in use, lazy-initializing if needed
+     *
+     * @return LanguageCache
+     */
+    public function getLanguageCache() {
+        if (!$this->languageCache) {
+            $this->languageCache = new LanguageCache();
+        }
+        return $this->languageCache;
+    }
+
+    /**
+     * Sets language cache
+     *
+     * @param LanguageCache $cache
+     */
+    public function setLanguageCache( LanguageCache $cache ) {
+        $this->languageCache = $cache;
     }
 }
