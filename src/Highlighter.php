@@ -5,24 +5,24 @@
  * For changes, release notes, TODOs etc, see the relevant files in the docs/
  * directory.
  *
- *   This file is part of Chechil
+ *  This file is part of Chechil
  *
- *  Chechil is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ * Chechil is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *  GeSHi is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * Chechil is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with GeSHi; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * You should have received a copy of the GNU General Public License
+ * along with Chechil; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * @author     Nigel McNie <nigel@geshi.org>, Benny Baumann <BenBE@omorphia.de>
- * @copyright  (C) 2004 - 2007 Nigel McNie, (C) 2007 - 2014 Benny Baumann
+ * @copyright  (C) 2004 - 2007 Nigel McNie, (C) 2007 - 2014 Benny Baumann, (C) 2015 Chechil contributors
  * @license    http://gnu.org/copyleft/gpl.html GNU GPL
  *
  */
@@ -175,15 +175,7 @@ define('GESHI_NUMBER_FLT_SCI_ZERO', 524288);       //\d+(\.\d+)?e\d+
 /**#@-*/
 
 /**
- * The highlighter Class.
- *
- * Please refer to the documentation for GeSHi 1.0.X that is available
- * at http://qbnz.com/highlighter/documentation.php for more information
- * about how to use this class.
- *
- * @package   geshi
- * @author    Nigel McNie <nigel@geshi.org>, Benny Baumann <BenBE@omorphia.de>
- * @copyright (C) 2004 - 2007 Nigel McNie, (C) 2007 - 2014 Benny Baumann
+ * Main highlighter class
  */
 class Highlighter {
     /**
