@@ -747,58 +747,6 @@ class Highlighter {
     }
 
     /**
-     * Sets the style for the actual code. This should be a string
-     * containing valid stylesheet declarations. If $preserve_defaults is
-     * true, then styles are merged with the default styles, with the
-     * user defined styles having priority
-     *
-     * Note: Use this method to override any style changes you made to
-     * the line numbers if you are using line numbers, else the line of
-     * code will have the same style as the line number! Consult the
-     * GeSHi documentation for more information about this.
-     *
-     * @param string $style The style to use for actual code
-     * @param boolean $preserve_defaults Whether to merge the current styles with the new styles
-     * @since 1.0.2
-     */
-    function set_code_style($style, $preserve_defaults = false) {
-        if (!$preserve_defaults) {
-            $this->code_style = $style;
-        } else {
-            $this->code_style .= $style;
-        }
-    }
-
-    /**
-     * Sets the styles for the line numbers.
-     *
-     * @param string $style1 The style for the line numbers that are "normal"
-     * @param string|boolean $style2 If a string, this is the style of the line
-     *        numbers that are "fancy", otherwise if boolean then this
-     *        defines whether the normal styles should be merged with the
-     *        new normal styles or not
-     * @param boolean $preserve_defaults If set, is the flag for whether to merge the "fancy"
-     *        styles with the current styles or not
-     * @since 1.0.2
-     */
-    function set_line_style($style1, $style2 = '', $preserve_defaults = false) {
-        //Check if we got 2 or three parameters
-        if (is_bool($style2)) {
-            $preserve_defaults = $style2;
-            $style2 = '';
-        }
-
-        //Actually set the new styles
-        if (!$preserve_defaults) {
-            $this->line_style1 = $style1;
-            $this->line_style2 = $style2;
-        } else {
-            $this->line_style1 .= $style1;
-            $this->line_style2 .= $style2;
-        }
-    }
-
-    /**
      * Sets whether line numbers should be displayed.
      *
      * Valid values for the first parameter are:
@@ -849,41 +797,6 @@ class Highlighter {
     }
 
     /**
-     * Sets the style for a keyword group. If $preserve_defaults is
-     * true, then styles are merged with the default styles, with the
-     * user defined styles having priority
-     *
-     * @param int     $key The key of the keyword group to change the styles of
-     * @param string  $style The style to make the keywords
-     * @param boolean $preserve_defaults Whether to merge the new styles with the old or just
-     *                to overwrite them
-     * @since 1.0.0
-     */
-    function set_keyword_group_style($key, $style, $preserve_defaults = false) {
-        //Set the style for this keyword group
-        if('*' == $key) {
-            foreach($this->language_data['STYLES']['KEYWORDS'] as $_key => $_value) {
-                if (!$preserve_defaults) {
-                    $this->language_data['STYLES']['KEYWORDS'][$_key] = $style;
-                } else {
-                    $this->language_data['STYLES']['KEYWORDS'][$_key] .= $style;
-                }
-            }
-        } else {
-            if (!$preserve_defaults) {
-                $this->language_data['STYLES']['KEYWORDS'][$key] = $style;
-            } else {
-                $this->language_data['STYLES']['KEYWORDS'][$key] .= $style;
-            }
-        }
-
-        //Update the lexic permissions
-        if (!isset($this->lexic_permissions['KEYWORDS'][$key])) {
-            $this->lexic_permissions['KEYWORDS'][$key] = true;
-        }
-    }
-
-    /**
      * Turns highlighting on/off for a keyword group
      *
      * @param int     $key The key of the keyword group to turn on or off
@@ -892,35 +805,6 @@ class Highlighter {
      */
     function set_keyword_group_highlighting($key, $flag = true) {
         $this->lexic_permissions['KEYWORDS'][$key] = ($flag) ? true : false;
-    }
-
-    /**
-     * Sets the styles for comment groups.  If $preserve_defaults is
-     * true, then styles are merged with the default styles, with the
-     * user defined styles having priority
-     *
-     * @param int     $key The key of the comment group to change the styles of
-     * @param string  $style The style to make the comments
-     * @param bool    $preserve_defaults Whether to merge the new styles with the old or just
-     *                to overwrite them
-     * @since 1.0.0
-     */
-    function set_comments_style($key, $style, $preserve_defaults = false) {
-        if('*' == $key) {
-            foreach($this->language_data['STYLES']['COMMENTS'] as $_key => $_value) {
-                if (!$preserve_defaults) {
-                    $this->language_data['STYLES']['COMMENTS'][$_key] = $style;
-                } else {
-                    $this->language_data['STYLES']['COMMENTS'][$_key] .= $style;
-                }
-            }
-        } else {
-            if (!$preserve_defaults) {
-                $this->language_data['STYLES']['COMMENTS'][$key] = $style;
-            } else {
-                $this->language_data['STYLES']['COMMENTS'][$key] .= $style;
-            }
-        }
     }
 
     /**
@@ -935,25 +819,6 @@ class Highlighter {
     }
 
     /**
-     * Sets the styles for escaped characters. If $preserve_defaults is
-     * true, then styles are merged with the default styles, with the
-     * user defined styles having priority
-     *
-     * @param string  $style The style to make the escape characters
-     * @param bool    $preserve_defaults Whether to merge the new styles with the old or just
-     *                to overwrite them
-     * @param int     $group
-     * @since 1.0.0
-     */
-    function set_escape_characters_style($style, $preserve_defaults = false, $group = 0) {
-        if (!$preserve_defaults) {
-            $this->language_data['STYLES']['ESCAPE_CHAR'][$group] = $style;
-        } else {
-            $this->language_data['STYLES']['ESCAPE_CHAR'][$group] .= $style;
-        }
-    }
-
-    /**
      * Turns highlighting on/off for escaped characters
      *
      * @param bool $flag Whether to turn highlighting for escape characters on or off
@@ -961,28 +826,6 @@ class Highlighter {
      */
     function set_escape_characters_highlighting($flag = true) {
         $this->lexic_permissions['ESCAPE_CHAR'] = ($flag) ? true : false;
-    }
-
-    /**
-     * Sets the styles for brackets. If $preserve_defaults is
-     * true, then styles are merged with the default styles, with the
-     * user defined styles having priority
-     *
-     * This method is DEPRECATED: use set_symbols_style instead.
-     * This method will be removed in 1.2.X
-     *
-     * @param string  $style The style to make the brackets
-     * @param bool    $preserve_defaults Whether to merge the new styles with the old or just
-     *                to overwrite them
-     * @since 1.0.0
-     * @deprecated In favour of set_symbols_style
-     */
-    function set_brackets_style($style, $preserve_defaults = false) {
-        if (!$preserve_defaults) {
-            $this->language_data['STYLES']['BRACKETS'][0] = $style;
-        } else {
-            $this->language_data['STYLES']['BRACKETS'][0] .= $style;
-        }
     }
 
     /**
@@ -1000,31 +843,6 @@ class Highlighter {
     }
 
     /**
-     * Sets the styles for symbols. If $preserve_defaults is
-     * true, then styles are merged with the default styles, with the
-     * user defined styles having priority
-     *
-     * @param string  $style The style to make the symbols
-     * @param boolean $preserve_defaults Whether to merge the new styles with the old or just
-     *                to overwrite them
-     * @param int     $group Tells the group of symbols for which style should be set.
-     * @since 1.0.1
-     */
-    function set_symbols_style($style, $preserve_defaults = false, $group = 0) {
-        // Update the style of symbols
-        if (!$preserve_defaults) {
-            $this->language_data['STYLES']['SYMBOLS'][$group] = $style;
-        } else {
-            $this->language_data['STYLES']['SYMBOLS'][$group] .= $style;
-        }
-
-        // For backward compatibility
-        if (0 == $group) {
-            $this->set_brackets_style ($style, $preserve_defaults);
-        }
-    }
-
-    /**
      * Turns highlighting on/off for symbols
      *
      * @param bool $flag Whether to turn highlighting for symbols on or off
@@ -1039,25 +857,6 @@ class Highlighter {
     }
 
     /**
-     * Sets the styles for strings. If $preserve_defaults is
-     * true, then styles are merged with the default styles, with the
-     * user defined styles having priority
-     *
-     * @param string  $style The style to make the escape characters
-     * @param bool    $preserve_defaults Whether to merge the new styles with the old or just
-     *                to overwrite them
-     * @param int     $group Tells the group of strings for which style should be set.
-     * @since 1.0.0
-     */
-    function set_strings_style($style, $preserve_defaults = false, $group = 0) {
-        if (!$preserve_defaults) {
-            $this->language_data['STYLES']['STRINGS'][$group] = $style;
-        } else {
-            $this->language_data['STYLES']['STRINGS'][$group] .= $style;
-        }
-    }
-
-    /**
      * Turns highlighting on/off for strings
      *
      * @param bool $flag Whether to turn highlighting for strings on or off
@@ -1065,45 +864,6 @@ class Highlighter {
      */
     function set_strings_highlighting($flag) {
         $this->lexic_permissions['STRINGS'] = ($flag) ? true : false;
-    }
-
-    /**
-     * Sets the styles for strict code blocks. If $preserve_defaults is
-     * true, then styles are merged with the default styles, with the
-     * user defined styles having priority
-     *
-     * @param string  $style The style to make the script blocks
-     * @param boolean $preserve_defaults Whether to merge the new styles with the old or just
-     *                to overwrite them
-     * @param int     $group Tells the group of script blocks for which style should be set.
-     * @since 1.0.8.4
-     */
-    function set_script_style($style, $preserve_defaults = false, $group = 0) {
-        // Update the style of symbols
-        if (!$preserve_defaults) {
-            $this->language_data['STYLES']['SCRIPT'][$group] = $style;
-        } else {
-            $this->language_data['STYLES']['SCRIPT'][$group] .= $style;
-        }
-    }
-
-    /**
-     * Sets the styles for numbers. If $preserve_defaults is
-     * true, then styles are merged with the default styles, with the
-     * user defined styles having priority
-     *
-     * @param string  $style The style to make the numbers
-     * @param boolean $preserve_defaults Whether to merge the new styles with the old or just
-     *                to overwrite them
-     * @param int     $group Tells the group of numbers for which style should be set.
-     * @since 1.0.0
-     */
-    function set_numbers_style($style, $preserve_defaults = false, $group = 0) {
-        if (!$preserve_defaults) {
-            $this->language_data['STYLES']['NUMBERS'][$group] = $style;
-        } else {
-            $this->language_data['STYLES']['NUMBERS'][$group] .= $style;
-        }
     }
 
     /**
@@ -1117,27 +877,6 @@ class Highlighter {
     }
 
     /**
-     * Sets the styles for methods. $key is a number that references the
-     * appropriate "object splitter" - see the language file for the language
-     * you are highlighting to get this number. If $preserve_defaults is
-     * true, then styles are merged with the default styles, with the
-     * user defined styles having priority
-     *
-     * @param int     $key The key of the object splitter to change the styles of
-     * @param string  $style The style to make the methods
-     * @param boolean $preserve_defaults Whether to merge the new styles with the old or just
-     *                to overwrite them
-     * @since 1.0.0
-     */
-    function set_methods_style($key, $style, $preserve_defaults = false) {
-        if (!$preserve_defaults) {
-            $this->language_data['STYLES']['METHODS'][$key] = $style;
-        } else {
-            $this->language_data['STYLES']['METHODS'][$key] .= $style;
-        }
-    }
-
-    /**
      * Turns highlighting on/off for methods
      *
      * @param bool $flag Whether to turn highlighting for methods on or off
@@ -1145,25 +884,6 @@ class Highlighter {
      */
     function set_methods_highlighting($flag) {
         $this->lexic_permissions['METHODS'] = ($flag) ? true : false;
-    }
-
-    /**
-     * Sets the styles for regexps. If $preserve_defaults is
-     * true, then styles are merged with the default styles, with the
-     * user defined styles having priority
-     *
-     * @param int     $key
-     * @param string  $style The style to make the regular expression matches
-     * @param boolean $preserve_defaults Whether to merge the new styles with the old or just
-     *                to overwrite them
-     * @since 1.0.0
-     */
-    function set_regexps_style($key, $style, $preserve_defaults = false) {
-        if (!$preserve_defaults) {
-            $this->language_data['STYLES']['REGEXPS'][$key] = $style;
-        } else {
-            $this->language_data['STYLES']['REGEXPS'][$key] .= $style;
-        }
     }
 
     /**
@@ -1569,26 +1289,6 @@ class Highlighter {
     }
 
     /**
-     * Sets the style for the header content
-     *
-     * @param string $style The style for the header content
-     * @since 1.0.2
-     */
-    function set_header_content_style($style) {
-        $this->header_content_style = $style;
-    }
-
-    /**
-     * Sets the style for the footer content
-     *
-     * @param string $style The style for the footer content
-     * @since 1.0.2
-     */
-    function set_footer_content_style($style) {
-        $this->footer_content_style = $style;
-    }
-
-    /**
      * Sets whether to force a surrounding block around
      * the highlighted code or not
      *
@@ -1610,18 +1310,6 @@ class Highlighter {
      */
     function set_url_for_keyword_group($group, $url) {
         $this->language_data['URLS'][$group] = $url;
-    }
-
-    /**
-     * Sets styles for links in code
-     *
-     * @param int $type A constant that specifies what state the style is being
-     *            set for - e.g. :hover or :visited
-     * @param string $styles The styles to use for that state
-     * @since 1.0.2
-     */
-    function set_link_styles($type, $styles) {
-        $this->link_styles[$type] = $styles;
     }
 
     /**
@@ -1683,16 +1371,6 @@ class Highlighter {
                 $this->highlight_extra_lines_styles[$lines] = $style;
             }
         }
-    }
-
-    /**
-     * Sets the style for extra-highlighted lines
-     *
-     * @param string $styles The style for extra-highlighted lines
-     * @since 1.0.2
-     */
-    function set_highlight_lines_extra_style($styles) {
-        $this->highlight_extra_lines_style = $styles;
     }
 
     /**
