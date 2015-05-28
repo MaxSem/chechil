@@ -493,17 +493,6 @@ class Highlighter {
     }
 
     /**
-     * Returns the version of GeSHi
-     *
-     * @return string
-     *
-     */
-    function get_version()
-    {
-        return self::VERSION;
-    }
-
-    /**
      * Gets a human-readable language name
      *
      * @return string The name for the current language
