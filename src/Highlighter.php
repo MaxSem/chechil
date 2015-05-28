@@ -485,7 +485,7 @@ class Highlighter {
      */
     public function __construct($source = '', $language = '', $path = '') {
         if ($source !== '' ) {
-            $this->set_source($source);
+            $this->setSource($source);
         }
         if ($language !== '') {
             $this->setLanguage($language);
@@ -506,12 +506,11 @@ class Highlighter {
     }
 
     /**
-     * Sets the source code for this object
+     * Sets the source code to be highlighted
      *
      * @param string $source The source code to highlight
-     * @since 1.0.0
      */
-    function set_source($source) {
+    public function setSource($source) {
         $this->source = $source;
         $this->highlight_extra_lines = array();
     }
@@ -600,12 +599,12 @@ class Highlighter {
     }
 
     /**
-     * Get supported langs or an associative array lang=>full_name.
-     * @param boolean $full_names
+     * Get supported languages or an associative array lang=>full_name
+     *
+     * @param boolean $fullNames
      * @return array
      */
-    function get_supported_languages($full_names=false)
-    {
+    public function getSupportedLanguages($fullNames = false) {
         //@FIXME: redo
         // return array
         $back = array();
@@ -632,7 +631,7 @@ class Highlighter {
             $langname = $matches[1];
 
             // We want the fullname too?
-            if ($full_names === true)
+            if ($fullNames === true)
             {
                 if (false !== ($fullname = $this->get_language_fullname($langname)))
                 {
@@ -1419,7 +1418,7 @@ class Highlighter {
     function load_from_file($file_name, $lookup = array()) {
         //@FIXME: rewrite
         if (is_readable($file_name)) {
-            $this->set_source(file_get_contents($file_name));
+            $this->setSource(file_get_contents($file_name));
             $this->setLanguage(self::get_language_name_from_extension(substr(strrchr($file_name, '.'), 1), $lookup));
         } else {
             $this->error = GESHI_ERROR_FILE_NOT_READABLE;
@@ -2474,7 +2473,7 @@ class Highlighter {
 
                                 //Add the style for the escape char ...
                                 $string .= "<span$escape_char_attributes>" .
-                                    GeSHi::hsc($this->language_data['ESCAPE_CHAR']);
+                                    self::hsc($this->language_data['ESCAPE_CHAR']);
 
                                 //Get the byte AFTER the ESCAPE_CHAR we just found
                                 $es_char = $part[$es_pos + 1];
