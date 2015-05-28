@@ -29,6 +29,10 @@
 
 namespace Chechil;
 
+use InvalidArgumentException;
+use RuntimeException;
+
+
 //
 // GeSHi Constants
 // You should use these constant names in your programs instead of
@@ -37,7 +41,7 @@ namespace Chechil;
 //
 
 
-// Line numbers - use with enable_line_numbers()
+// Line numbers - use with enableLineNumbers()
 /** Use no line numbers when building the result */
 define('GESHI_NO_LINE_NUMBERS', 0);
 /** Use normal line numbers when building the result */
@@ -168,18 +172,6 @@ define('GESHI_NUMBER_FLT_SCI_ZERO', 524288);       //\d+(\.\d+)?e\d+
 //Custom formats are passed by RX array
 
 // Error detection - use these to analyse faults
-/** No sourcecode to highlight was specified
- * @deprecated
- */
-define('GESHI_ERROR_NO_INPUT', 1);
-/** The language specified does not exist */
-define('GESHI_ERROR_NO_SUCH_LANG', 2);
-/** GeSHi could not open a file for reading (generally a language file) */
-define('GESHI_ERROR_FILE_NOT_READABLE', 3);
-/** The header type passed to {@link GeSHi->set_header_type()} was invalid */
-define('GESHI_ERROR_INVALID_HEADER_TYPE', 4);
-/** The line number type passed to {@link GeSHi->enable_line_numbers()} was invalid */
-define('GESHI_ERROR_INVALID_LINE_NUMBER_TYPE', 5);
 /**#@-*/
 
 /**
@@ -219,13 +211,6 @@ class Highlighter {
      * @var array
      */
     var $language_data = array();
-
-    /**
-     * The error message associated with an error
-     * @var string
-     * @todo check err reporting works
-     */
-    var $error = false;
 
     /**
      * Whether highlighting is strict or not
@@ -496,9 +481,9 @@ class Highlighter {
      *
      * @param string $source The source code to highlight
      * @param string $language The language to highlight the source with
-     * @since 1.0.0
+     * @throws InvalidLanguageCodeException
      */
-    function __construct($source = '', $language = '', $path = '') {
+    public function __construct($source = '', $language = '', $path = '') {
         if ($source !== '' ) {
             $this->set_source($source);
         }
@@ -519,15 +504,14 @@ class Highlighter {
     }
 
     /**
-     * Gets a human-readable language name (thanks to Simon Patterson
-     * for the idea :))
+     * Gets a human-readable language name
      *
      * @return string The name for the current language
-     * @since  1.0.2
+     * @throws RuntimeException
      */
-    function get_language_name() {
-        if (GESHI_ERROR_NO_SUCH_LANG == $this->error) {
-            return $this->language_data['LANG_NAME'] . ' (Unknown Language)';
+    function getLanguageName() {
+        if (!isset($this->language_data['LANG_NAME'])) {
+            throw new RuntimeException(__METHOD__ . '(): language not loaded');
         }
         return $this->language_data['LANG_NAME'];
     }
@@ -550,8 +534,9 @@ class Highlighter {
      *       if you need this set $force_reset = true
      *
      * @param string $language The name of the language to use
+     * @throws InvalidLanguageCodeException
      */
-    function setLanguage($language) {
+    public function setLanguage($language) {
         //Clean up the language name to prevent malicious code injection
         $language = preg_replace('#[^a-zA-Z0-9\-_]#', '', $language);
 
@@ -720,17 +705,16 @@ class Highlighter {
      * should be outputted.
      *
      * @param int $type The type of header to be used
-     * @since 1.0.0
+     * @throws InvalidArgumentException
      */
-    function set_header_type($type) {
+    public function setHeaderType($type) {
         //Check if we got a valid header type
         if (!in_array($type, array(GESHI_HEADER_NONE, GESHI_HEADER_DIV,
-            GESHI_HEADER_PRE, GESHI_HEADER_PRE_VALID, GESHI_HEADER_PRE_TABLE))) {
-            $this->error = GESHI_ERROR_INVALID_HEADER_TYPE;
-            return;
+            GESHI_HEADER_PRE, GESHI_HEADER_PRE_VALID, GESHI_HEADER_PRE_TABLE)))
+        {
+            throw new InvalidArgumentException(__METHOD__ . '(): header type is not one of GESHI_HEADER_* constants');
         }
 
-        //Set that new header type
         $this->header_type = $type;
     }
 
@@ -841,12 +825,13 @@ class Highlighter {
      *
      * @param int $flag How line numbers should be displayed
      * @param int $nth_row Defines which lines are fancy
-     * @since 1.0.0
+     * @throws InvalidArgumentException
      */
-    function enable_line_numbers($flag, $nth_row = 5) {
+    public function enableLineNumbers($flag, $nth_row = 5) {
         if (GESHI_NO_LINE_NUMBERS != $flag && GESHI_NORMAL_LINE_NUMBERS != $flag
-            && GESHI_FANCY_LINE_NUMBERS != $flag) {
-            $this->error = GESHI_ERROR_INVALID_LINE_NUMBER_TYPE;
+            && GESHI_FANCY_LINE_NUMBERS != $flag)
+        {
+            throw new InvalidArgumentException(__METHOD__ . '(): $flag is not one of GESHI_*_LINE_NUMBERS constants');
         }
         $this->line_numbers = $flag;
         $this->line_nth_row = $nth_row;
@@ -1443,6 +1428,7 @@ class Highlighter {
      * @since 1.0.5
      */
     function load_from_file($file_name, $lookup = array()) {
+        //@FIXME: rewrite
         if (is_readable($file_name)) {
             $this->set_source(file_get_contents($file_name));
             $this->setLanguage(self::get_language_name_from_extension(substr(strrchr($file_name, '.'), 1), $lookup));
@@ -2028,21 +2014,6 @@ class Highlighter {
         // Replace all newlines to a common form.
         $code = str_replace("\r\n", "\n", $this->source);
         $code = str_replace("\r", "\n", $code);
-
-        // Firstly, if there is an error, we won't highlight
-        if ($this->error) {
-            //Escape the source for output
-            $result = self::hsc($this->source);
-
-            //This fix is related to SF#1923020, but has to be applied regardless of
-            //actually highlighting symbols.
-            $result = str_replace(array('<SEMI>', '<PIPE>'), array(';', '|'), $result);
-
-            // Timing is irrelevant
-            $this->set_time($start_time, $start_time);
-            $this->finalise($result);
-            return $result;
-        }
 
         // make sure the parse cache is up2date
         if (!$this->parse_cache_built) {
@@ -4057,13 +4028,6 @@ class Highlighter {
      * @since  1.0.0
      */
     function get_stylesheet($economy_mode = true) {
-        // If there's an error, chances are that the language file
-        // won't have populated the language data file, so we can't
-        // risk getting a stylesheet...
-        if ($this->error) {
-            return '';
-        }
-
         //Check if the style rearrangements have been processed ...
         //This also does some preprocessing to check which style groups are useable ...
         if(!isset($this->language_data['NUMBERS_CACHE'])) {

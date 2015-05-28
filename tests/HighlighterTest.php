@@ -28,4 +28,36 @@ class HighlighterTest extends PHPUnit_Framework_TestCase {
 		}
 		return $result;
 	}
+
+	/**
+	 * @dataProvider provideGetLanguageNameThrows
+	 * @expectedException RuntimeException
+	 */
+	public function testGetLanguageNameThrows($source, $language) {
+		$chechil = new Chechil\Highlighter($source, $language);
+		$chechil->getLanguageName();
+	}
+
+	public function provideGetLanguageNameThrows() {
+		return array(
+			array('', ''),
+			array('foo bar', ''),
+		);
+	}
+
+	/**
+	 * @expectedException InvalidArgumentException
+	 */
+	public function testSetHeaderTypeThrows() {
+		$chechil = new Chechil\Highlighter();
+		$chechil->setHeaderType(12345);
+	}
+
+	/**
+	 * @expectedException InvalidArgumentException
+	 */
+	public function testEnableLineNumbersThrows() {
+		$chechil = new Chechil\Highlighter();
+		$chechil->enableLineNumbers(12345);
+	}
 }
