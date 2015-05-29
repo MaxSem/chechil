@@ -459,7 +459,7 @@ class Highlighter {
      * @param string $language The language to highlight the source with
      * @throws InvalidLanguageCodeException
      */
-    public function __construct($source = '', $language = '', $path = '') {
+    public function __construct($source = '', $language = '') {
         if ($source !== '' ) {
             $this->setSource($source);
         }

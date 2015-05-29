@@ -93,6 +93,23 @@ class LanguageCache {
     }
 
     /**
+     * Returns a list of supported language codes
+     * @return array
+     */
+    public function getLanguages() {
+        $result = array();
+        foreach (glob(__DIR__ . '/geshi/*.php') as $file) {
+            $result[] = pathinfo($file, PATHINFO_FILENAME);
+        }
+        if ($this->customLanguages) {
+            $result = array_merge($result, array_keys($this->customLanguages));
+            sort($result);
+            $result = array_unique($result);
+        }
+        return $result;
+    }
+
+    /**
      * Loads language information from file
      *
      * @param string $languageCode
