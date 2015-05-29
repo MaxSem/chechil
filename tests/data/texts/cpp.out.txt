@@ -1,4 +1,4 @@
-<pre class="cpp"><span class="co2">#include &lt;iostream&gt;</span>
+<pre class="chechil chechil-cpp"><span class="co2">#include &lt;iostream&gt;</span>
 <span class="co2">#include &lt;cstdio&gt;</span>
 &nbsp;
 <span class="co2">#ifndef FAIL</span>

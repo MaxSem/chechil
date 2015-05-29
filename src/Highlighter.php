@@ -3422,7 +3422,7 @@ class Highlighter {
          * @todo   Document behaviour change - class is outputted regardless of whether
          *         we're using classes or not. Same with style
          */
-        $attributes = ' class="' . $this->_genCSSName($this->language);
+        $attributes = ' class="chechil chechil-' . htmlspecialchars($this->language);
         if ($this->overall_class != '') {
             $attributes .= " ".$this->_genCSSName($this->overall_class);
         }
