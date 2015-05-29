@@ -211,13 +211,6 @@ class Highlighter {
     var $strict_mode = false;
 
     /**
-     * Whether to use CSS classes in output
-     * @deprecated: Will die as soon as we have a unit test suite. Always forced to true meanwhile.
-     * @var boolean
-     */
-    private $use_classes = true;
-
-    /**
      * The type of header to use. Can be one of the following
      * values:
      *
@@ -1557,26 +1550,14 @@ class Highlighter {
         // brackets
         if ($this->lexic_permissions['BRACKETS']) {
             $this->language_data['CACHE_BRACKET_MATCH'] = array('[', ']', '(', ')', '{', '}');
-            if (!$this->use_classes && isset($this->language_data['STYLES']['BRACKETS'][0])) {
-                $this->language_data['CACHE_BRACKET_REPLACE'] = array(
-                    '<| style="' . $this->language_data['STYLES']['BRACKETS'][0] . '">&#91;|>',
-                    '<| style="' . $this->language_data['STYLES']['BRACKETS'][0] . '">&#93;|>',
-                    '<| style="' . $this->language_data['STYLES']['BRACKETS'][0] . '">&#40;|>',
-                    '<| style="' . $this->language_data['STYLES']['BRACKETS'][0] . '">&#41;|>',
-                    '<| style="' . $this->language_data['STYLES']['BRACKETS'][0] . '">&#123;|>',
-                    '<| style="' . $this->language_data['STYLES']['BRACKETS'][0] . '">&#125;|>',
-                );
-            }
-            else {
-                $this->language_data['CACHE_BRACKET_REPLACE'] = array(
-                    '<| class="br0">&#91;|>',
-                    '<| class="br0">&#93;|>',
-                    '<| class="br0">&#40;|>',
-                    '<| class="br0">&#41;|>',
-                    '<| class="br0">&#123;|>',
-                    '<| class="br0">&#125;|>',
-                );
-            }
+            $this->language_data['CACHE_BRACKET_REPLACE'] = array(
+                '<| class="br0">&#91;|>',
+                '<| class="br0">&#93;|>',
+                '<| class="br0">&#40;|>',
+                '<| class="br0">&#41;|>',
+                '<| class="br0">&#123;|>',
+                '<| class="br0">&#125;|>',
+            );
         }
 
         //Build the parse cache needed to highlight numbers appropriate
@@ -1937,12 +1918,7 @@ class Highlighter {
                     $this->lexic_permissions['SCRIPT']) {
                     // Add a span element around the source to
                     // highlight the overall source block
-                    if (!$this->use_classes &&
-                        $this->language_data['STYLES']['SCRIPT'][$script_key] != '') {
-                        $attributes = ' style="' . $this->language_data['STYLES']['SCRIPT'][$script_key] . '"';
-                    } else {
-                        $attributes = ' class="sc' . $script_key . '"';
-                    }
+                    $attributes = ' class="sc' . $script_key . '"';
                     $result .= "<span$attributes>";
                     $STRICTATTRS = $attributes;
                 }
@@ -2051,11 +2027,7 @@ class Highlighter {
                         $result .= $this->parse_non_string_part($stuff_to_parse);
                         $stuff_to_parse = '';
 
-                        if (!$this->use_classes) {
-                            $string_attributes = ' style="' . $this->language_data['STYLES']['STRINGS'][$string_key] . '"';
-                        } else {
-                            $string_attributes = ' class="st'.$string_key.'"';
-                        }
+                        $string_attributes = ' class="st'.$string_key.'"';
 
                         // now handle the string
                         $string = "<span$string_attributes>" . self::hsc($char);
@@ -2135,11 +2107,7 @@ class Highlighter {
                                 $string .= self::hsc(substr($part, $start, $es_pos - $start));
 
                                 //Get the style for this escaped char ...
-                                if (!$this->use_classes) {
-                                    $escape_char_attributes = ' style="' . $this->language_data['STYLES']['ESCAPE_CHAR'][0] . '"';
-                                } else {
-                                    $escape_char_attributes = ' class="es0"';
-                                }
+                                $escape_char_attributes = ' class="es0"';
 
                                 //Add the style for the escape char ...
                                 $string .= "<span$escape_char_attributes>" .
@@ -2171,11 +2139,7 @@ class Highlighter {
                                 $escape_key = $escape['key'];
 
                                 //Get the style for this escaped char ...
-                                if (!$this->use_classes) {
-                                    $escape_char_attributes = ' style="' . $this->language_data['STYLES']['ESCAPE_CHAR'][$escape_key] . '"';
-                                } else {
-                                    $escape_char_attributes = ' class="es' . $escape_key . '"';
-                                }
+                               $escape_char_attributes = ' class="es' . $escape_key . '"';
 
                                 //Add the style for the escape char ...
                                 $string .= "<span$escape_char_attributes>" .
@@ -2206,13 +2170,9 @@ class Highlighter {
                     } elseif ($this->lexic_permissions['STRINGS'] && $hq && $hq[0] == $char &&
                         substr($part, $i, $hq_strlen) == $hq && ($i != $next_comment_regexp_pos)) {
                         // The start of a hard quoted string
-                        if (!$this->use_classes) {
-                            $string_attributes = ' style="' . $this->language_data['STYLES']['STRINGS']['HARD'] . '"';
-                            $escape_char_attributes = ' style="' . $this->language_data['STYLES']['ESCAPE_CHAR']['HARD'] . '"';
-                        } else {
-                            $string_attributes = ' class="st_h"';
-                            $escape_char_attributes = ' class="es_h"';
-                        }
+                        $string_attributes = ' class="st_h"';
+                        $escape_char_attributes = ' class="es_h"';
+
                         // parse the stuff before this
                         $result .= $this->parse_non_string_part($stuff_to_parse);
                         $stuff_to_parse = '';
@@ -2319,11 +2279,7 @@ class Highlighter {
                             $test_str = self::hsc(substr($part, $i, $comment['length']));
 
                             if ($this->lexic_permissions['COMMENTS']['MULTI']) {
-                                if (!$this->use_classes) {
-                                    $attributes = ' style="' . $this->language_data['STYLES']['COMMENTS'][$comment['key']] . '"';
-                                } else {
-                                    $attributes = ' class="co' . $comment['key'] . '"';
-                                }
+                                $attributes = ' class="co' . $comment['key'] . '"';
 
                                 $test_str = "<span$attributes>" . $test_str . "</span>";
 
@@ -2384,12 +2340,7 @@ class Highlighter {
                                 $test_str_match = $open;
 
                                 if ($this->lexic_permissions['COMMENTS']['MULTI']) {
-                                    if (!$this->use_classes) {
-                                        $attributes = ' style="' . $this->language_data['STYLES']['COMMENTS']['MULTI'] . '"';
-                                    } else {
-                                        $attributes = ' class="coMULTI"';
-                                    }
-                                    $test_str = "<span$attributes>" . self::hsc($open);
+                                    $test_str = '<span class="coMULTI">' . self::hsc($open);
                                 } else {
                                     $test_str = self::hsc($open);
                                 }
@@ -2476,11 +2427,7 @@ class Highlighter {
                                     // this is a valid comment
                                     $COMMENT_MATCHED = true;
                                     if ($this->lexic_permissions['COMMENTS'][$comment_key]) {
-                                        if (!$this->use_classes) {
-                                            $attributes = ' style="' . $this->language_data['STYLES']['COMMENTS'][$comment_key] . '"';
-                                        } else {
-                                            $attributes = ' class="co' . $comment_key . '"';
-                                        }
+                                        $attributes = ' class="co' . $comment_key . '"';
                                         $test_str = "<span$attributes>" . self::hsc($this->change_case($comment_mark));
                                     } else {
                                         $test_str = self::hsc($comment_mark);
@@ -2918,13 +2865,7 @@ class Highlighter {
         // Now that's all done, replace /[number]/ with the correct styles
         //
         foreach (array_keys($this->language_data['KEYWORDS']) as $k) {
-            if (!$this->use_classes) {
-                $attributes = ' style="' .
-                    (isset($this->language_data['STYLES']['KEYWORDS'][$k]) ?
-                    $this->language_data['STYLES']['KEYWORDS'][$k] : "") . '"';
-            } else {
-                $attributes = ' class="kw' . $k . '"';
-            }
+            $attributes = ' class="kw' . $k . '"';
             $stuff_to_parse = str_replace("<|/$k/>", "<|$attributes>", $stuff_to_parse);
         }
 
@@ -2935,11 +2876,7 @@ class Highlighter {
                 //                if ($numbers_permissions & $id) {
                 //Get the appropriate style ...
                 //Checking for unset styles is done by the style cache builder ...
-                if (!$this->use_classes) {
-                    $attributes = ' style="' . $this->language_data['STYLES']['NUMBERS'][$id] . '"';
-                } else {
-                    $attributes = ' class="nu'.$id.'"';
-                }
+                $attributes = ' class="nu'.$id.'"';
 
                 //Set in the correct styles ...
                 $stuff_to_parse = str_replace("/NUM!$id/", $attributes, $stuff_to_parse);
@@ -2968,11 +2905,7 @@ class Highlighter {
 
             foreach ($this->language_data['OBJECT_SPLITTERS'] as $key => $splitter) {
                 if (false !== strpos($stuff_to_parse, $splitter)) {
-                    if (!$this->use_classes) {
-                        $attributes = ' style="' . $this->language_data['STYLES']['METHODS'][$key] . '"';
-                    } else {
-                        $attributes = ' class="me' . $key . '"';
-                    }
+                    $attributes = ' class="me' . $key . '"';
                     $stuff_to_parse = preg_replace("/($oolang_before)(" . preg_quote($this->language_data['OBJECT_SPLITTERS'][$key], '/') . ")($oolang_spaces)($oolang_after)/", "\\1\\2\\3<|$attributes>\\4|>", $stuff_to_parse);
                 }
             }
@@ -3027,11 +2960,7 @@ class Highlighter {
                                 $symbol_hl .= "|>";
                             }
                             $old_sym = $this->language_data['SYMBOL_DATA'][$sym_ms];
-                            if (!$this->use_classes) {
-                                $symbol_hl .= '<| style="' . $this->language_data['STYLES']['SYMBOLS'][$old_sym] . '">';
-                            } else {
-                                $symbol_hl .= '<| class="sy' . $old_sym . '">';
-                            }
+                            $symbol_hl .= '<| class="sy' . $old_sym . '">';
                         }
                         $symbol_hl .= $sym_ms;
                     }
@@ -3043,11 +2972,7 @@ class Highlighter {
                         $symbol_hl .= "|>";
                     }
                 } else {
-                    if (!$this->use_classes) {
-                        $symbol_hl = '<| style="' . $this->language_data['STYLES']['SYMBOLS'][0] . '">';
-                    } else {
-                        $symbol_hl = '<| class="sy0">';
-                    }
+                    $symbol_hl = '<| class="sy0">';
                     $symbol_hl .= $symbol_match . '|>';
                 }
 
@@ -3069,16 +2994,12 @@ class Highlighter {
                         array($this, 'handle_regexps_callback'),
                         $stuff_to_parse);
                 } else {
-                    if (!$this->use_classes) {
-                        $attributes = ' style="' . $this->language_data['STYLES']['REGEXPS'][$key] . '"';
+                    if (is_array($this->language_data['REGEXPS'][$key]) &&
+                        array_key_exists(GESHI_CLASS, $this->language_data['REGEXPS'][$key])) {
+                        $attributes = ' class="' .
+                            $this->language_data['REGEXPS'][$key][GESHI_CLASS] . '"';
                     } else {
-                        if (is_array($this->language_data['REGEXPS'][$key]) &&
-                            array_key_exists(GESHI_CLASS, $this->language_data['REGEXPS'][$key])) {
-                            $attributes = ' class="' .
-                                $this->language_data['REGEXPS'][$key][GESHI_CLASS] . '"';
-                        } else {
-                           $attributes = ' class="re' . $key . '"';
-                        }
+                       $attributes = ' class="re' . $key . '"';
                     }
                     $stuff_to_parse = str_replace("!REG3XP$key!", "$attributes", $stuff_to_parse);
                 }
@@ -3089,11 +3010,7 @@ class Highlighter {
         $stuff_to_parse = str_replace('<DOT>', '.', $stuff_to_parse);
         // Replace <|UR1| with <a href= for urls also
         if (isset($this->link_styles[GESHI_LINK])) {
-            if ($this->use_classes) {
-                $stuff_to_parse = str_replace('<|UR1|', '<a' . $this->link_target . ' href=', $stuff_to_parse);
-            } else {
-                $stuff_to_parse = str_replace('<|UR1|', '<a' . $this->link_target . ' style="' . $this->link_styles[GESHI_LINK] . '" href=', $stuff_to_parse);
-            }
+            $stuff_to_parse = str_replace('<|UR1|', '<a' . $this->link_target . ' href=', $stuff_to_parse);
         } else {
             $stuff_to_parse = str_replace('<|UR1|', '<a' . $this->link_target . ' href=', $stuff_to_parse);
         }
@@ -3222,28 +3139,13 @@ class Highlighter {
                 if ($this->line_numbers == GESHI_FANCY_LINE_NUMBERS &&
                     $i % $this->line_nth_row == ($this->line_nth_row - 1)) {
                     // Set the attributes to style the line
-                    if ($this->use_classes) {
-                        //$attr = ' class="li2"';
-                        $attrs['class'][] = 'li2';
-                        $def_attr = ' class="de2"';
-                    } else {
-                        //$attr = ' style="' . $this->line_style2 . '"';
-                        $attrs['style'][] = $this->line_style2;
-                        // This style "covers up" the special styles set for special lines
-                        // so that styles applied to special lines don't apply to the actual
-                        // code on that line
-                        $def_attr = ' style="' . $this->code_style . '"';
-                    }
+                    //$attr = ' class="li2"';
+                    $attrs['class'][] = 'li2';
+                    $def_attr = ' class="de2"';
                 } else {
-                    if ($this->use_classes) {
-                        //$attr = ' class="li1"';
-                        $attrs['class'][] = 'li1';
-                        $def_attr = ' class="de1"';
-                    } else {
-                        //$attr = ' style="' . $this->line_style1 . '"';
-                        $attrs['style'][] = $this->line_style1;
-                        $def_attr = ' style="' . $this->code_style . '"';
-                    }
+                    //$attr = ' class="li1"';
+                    $attrs['class'][] = 'li1';
+                    $def_attr = ' class="de1"';
                 }
 
                 //Check which type of tag to insert for this line
@@ -3265,14 +3167,10 @@ class Highlighter {
 
                 //Is this some line with extra styles???
                 if (in_array($i, $this->highlight_extra_lines)) {
-                    if ($this->use_classes) {
-                        if (isset($this->highlight_extra_lines_styles[$i])) {
-                            $attrs['class'][] = "lx$i";
-                        } else {
-                            $attrs['class'][] = "ln-xtra";
-                        }
+                    if (isset($this->highlight_extra_lines_styles[$i])) {
+                        $attrs['class'][] = "lx$i";
                     } else {
-                        array_push($attrs['style'], $this->get_line_style($i));
+                        $attrs['class'][] = "ln-xtra";
                     }
                 }
 
@@ -3287,20 +3185,12 @@ class Highlighter {
             }
         } else {
             $n = count($code);
-            if ($this->use_classes) {
-                $attributes = ' class="de1"';
-            } else {
-                $attributes = ' style="'. $this->code_style .'"';
-            }
+            $attributes = ' class="de1"';
             if ($this->header_type == GESHI_HEADER_PRE_VALID) {
                 $parsed_code .= '<pre'. $attributes .'>';
             } elseif ($this->header_type == GESHI_HEADER_PRE_TABLE) {
                 if ($this->line_numbers != GESHI_NO_LINE_NUMBERS) {
-                    if ($this->use_classes) {
-                        $attrs = ' class="ln"';
-                    } else {
-                        $attrs = ' style="'. $this->table_linenumber_style .'"';
-                    }
+                    $attrs = ' class="ln"';
                     $parsed_code .= '<td'.$attrs.'><pre'.$attributes.'>';
                     // get linenumbers
                     // we don't merge it with the for below, since it should be better for
@@ -3313,27 +3203,15 @@ class Highlighter {
                         if ($this->line_numbers == GESHI_FANCY_LINE_NUMBERS &&
                             $i % $this->line_nth_row == ($this->line_nth_row - 1)) {
                             // Set the attributes to style the line
-                            if ($this->use_classes) {
-                                $parsed_code .= '<span class="xtra li2"><span class="de2">';
-                            } else {
-                                // This style "covers up" the special styles set for special lines
-                                // so that styles applied to special lines don't apply to the actual
-                                // code on that line
-                                $parsed_code .= '<span style="display:block;' . $this->line_style2 . '">'
-                                                  .'<span style="' . $this->code_style .'">';
-                            }
+                            $parsed_code .= '<span class="xtra li2"><span class="de2">';
                             $close += 2;
                         }
                         //Is this some line with extra styles???
                         if (in_array($i + 1, $this->highlight_extra_lines)) {
-                            if ($this->use_classes) {
-                                if (isset($this->highlight_extra_lines_styles[$i])) {
-                                    $parsed_code .= "<span class=\"xtra lx$i\">";
-                                } else {
-                                    $parsed_code .= "<span class=\"xtra ln-xtra\">";
-                                }
+                            if (isset($this->highlight_extra_lines_styles[$i])) {
+                                $parsed_code .= "<span class=\"xtra lx$i\">";
                             } else {
-                                $parsed_code .= "<span style=\"display:block;" . $this->get_line_style($i) . "\">";
+                                $parsed_code .= "<span class=\"xtra ln-xtra\">";
                             }
                             ++$close;
                         }
@@ -3361,27 +3239,15 @@ class Highlighter {
                 if ($this->line_numbers == GESHI_FANCY_LINE_NUMBERS &&
                     $i % $this->line_nth_row == ($this->line_nth_row - 1)) {
                     // Set the attributes to style the line
-                    if ($this->use_classes) {
-                        $parsed_code .= '<span class="xtra li2"><span class="de2">';
-                    } else {
-                        // This style "covers up" the special styles set for special lines
-                        // so that styles applied to special lines don't apply to the actual
-                        // code on that line
-                        $parsed_code .= '<span style="display:block;' . $this->line_style2 . '">'
-                                          .'<span style="' . $this->code_style .'">';
-                    }
+                    $parsed_code .= '<span class="xtra li2"><span class="de2">';
                     $close += 2;
                 }
                 //Is this some line with extra styles???
                 if (in_array($i + 1, $this->highlight_extra_lines)) {
-                    if ($this->use_classes) {
-                        if (isset($this->highlight_extra_lines_styles[$i])) {
-                            $parsed_code .= "<span class=\"xtra lx$i\">";
-                        } else {
-                            $parsed_code .= "<span class=\"xtra ln-xtra\">";
-                        }
+                    if (isset($this->highlight_extra_lines_styles[$i])) {
+                        $parsed_code .= "<span class=\"xtra lx$i\">";
                     } else {
-                        $parsed_code .= "<span style=\"display:block;" . $this->get_line_style($i) . "\">";
+                        $parsed_code .= "<span class=\"xtra ln-xtra\">";
                     }
                     ++$close;
                 }
@@ -3431,9 +3297,6 @@ class Highlighter {
         if ($this->overall_id != '') {
             $attributes .= " id=\"{$this->overall_id}\"";
         }
-        if ($this->overall_style != '' && !$this->use_classes) {
-            $attributes .= ' style="' . $this->overall_style . '"';
-        }
 
         $ol_attributes = '';
 
@@ -3449,11 +3312,7 @@ class Highlighter {
             }
             $header = $this->replace_keywords($header);
 
-            if ($this->use_classes) {
-                $attr = ' class="head"';
-            } else {
-                $attr = " style=\"{$this->header_content_style}\"";
-            }
+            $attr = ' class="head"';
             if ($this->header_type == GESHI_HEADER_PRE_TABLE && $this->line_numbers != GESHI_NO_LINE_NUMBERS) {
                 $header = "<thead><tr><td colspan=\"2\" $attr>$header</td></tr></thead>";
             } else {
@@ -3504,11 +3363,7 @@ class Highlighter {
             }
             $footer = $this->replace_keywords($footer);
 
-            if ($this->use_classes) {
-                $attr = ' class="foot"';
-            } else {
-                $attr = " style=\"{$this->footer_content_style}\"";
-            }
+            $attr = ' class="foot"';
             if ($this->header_type == GESHI_HEADER_PRE_TABLE && $this->line_numbers != GESHI_NO_LINE_NUMBERS) {
                 $footer = "<tfoot><tr><td colspan=\"2\">$footer</td></tr></tfoot>";
             } else {
