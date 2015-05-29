@@ -3301,7 +3301,6 @@ class Highlighter {
             if ($this->header_type == GESHI_HEADER_PRE || $this->header_type == GESHI_HEADER_PRE_VALID) {
                 $header = str_replace("\n", '', $header);
             }
-            $header = $this->replace_keywords($header);
 
             $attr = ' class="head"';
             if ($this->header_type == GESHI_HEADER_PRE_TABLE && $this->line_numbers != GESHI_NO_LINE_NUMBERS) {
@@ -3352,7 +3351,6 @@ class Highlighter {
             if ($this->header_type == GESHI_HEADER_PRE) {
                 $footer = str_replace("\n", '', $footer);;
             }
-            $footer = $this->replace_keywords($footer);
 
             $attr = ' class="foot"';
             if ($this->header_type == GESHI_HEADER_PRE_TABLE && $this->line_numbers != GESHI_NO_LINE_NUMBERS) {
@@ -3387,47 +3385,6 @@ class Highlighter {
             return ($this->force_code_block ? '</div>' : '') .
                 "$footer</pre>";
         }
-    }
-
-    /**
-     * Replaces certain keywords in the header and footer with
-     * certain configuration values
-     *
-     * @param  string $instr The header or footer content to do replacement on
-     * @return string The header or footer with replaced keywords
-     * @since  1.0.2
-     * @access private
-     */
-    function replace_keywords($instr) {
-        $keywords = $replacements = array();
-
-        $keywords[] = '<TIME>';
-        $keywords[] = '{TIME}';
-        $replacements[] = $replacements[] = number_format($time = $this->get_time(), 3);
-
-        $keywords[] = '<LANGUAGE>';
-        $keywords[] = '{LANGUAGE}';
-        $replacements[] = $replacements[] = $this->language_data['LANG_NAME'];
-
-        $keywords[] = '<VERSION>';
-        $keywords[] = '{VERSION}';
-        $replacements[] = $replacements[] = self::VERSION;
-
-        $keywords[] = '<SPEED>';
-        $keywords[] = '{SPEED}';
-        if ($time <= 0) {
-            $speed = 'N/A';
-        } else {
-            $speed = strlen($this->source) / $time;
-            if ($speed >= 1024) {
-                $speed = sprintf("%.2f KB/s", $speed / 1024.0);
-            } else {
-                $speed = sprintf("%.0f B/s", $speed);
-            }
-        }
-        $replacements[] = $replacements[] = $speed;
-
-        return str_replace($keywords, $replacements, $instr);
     }
 
     /**
