@@ -171,8 +171,6 @@ define('GESHI_NUMBER_FLT_SCI_SHORT', 262144);      //\.\d+e\d+
 define('GESHI_NUMBER_FLT_SCI_ZERO', 524288);       //\d+(\.\d+)?e\d+
 //Custom formats are passed by RX array
 
-// Error detection - use these to analyse faults
-/**#@-*/
 
 /**
  * Main highlighter class
@@ -183,32 +181,29 @@ class Highlighter {
      */
     const VERSION = '0.9';
 
-    /**#@+
-     * @access private
-     */
     /**
      * The source code to highlight
      * @var string
      */
-    var $source = '';
+    private $source = '';
 
     /**
      * The language to use when highlighting
      * @var string
      */
-    var $language = '';
+    private $language = '';
 
     /**
      * The data for the language used
      * @var array
      */
-    var $language_data = array();
+    private $language_data = array();
 
     /**
      * Whether highlighting is strict or not
      * @var boolean
      */
-    var $strict_mode = false;
+    private $strict_mode = false;
 
     /**
      * The type of header to use. Can be one of the following
@@ -220,13 +215,13 @@ class Highlighter {
      *
      * @var int
      */
-    var $header_type = GESHI_HEADER_PRE;
+    private $header_type = GESHI_HEADER_PRE;
 
     /**
      * Array of permissions for which lexics should be highlighted
      * @var array
      */
-    var $lexic_permissions = array(
+    private $lexic_permissions = array(
         'KEYWORDS' =>    array(),
         'COMMENTS' =>    array('MULTI' => true),
         'REGEXPS' =>     array(),
@@ -243,68 +238,68 @@ class Highlighter {
      * The time it took to parse the code
      * @var double
      */
-    var $time = 0;
+    private $time = 0;
 
     /**
      * The content of the header block
      * @var string
      */
-    var $header_content = '';
+    private $header_content = '';
 
     /**
      * The content of the footer block
      * @var string
      */
-    var $footer_content = '';
+    private $footer_content = '';
 
     /**
      * The style of the header block
      * @var string
      */
-    var $header_content_style = '';
+    private $header_content_style = '';
 
     /**
      * The style of the footer block
      * @var string
      */
-    var $footer_content_style = '';
+    private $footer_content_style = '';
 
     /**
      * Tells if a block around the highlighted source should be forced
      * if not using line numbering
      * @var boolean
      */
-    var $force_code_block = false;
+    private $force_code_block = false;
 
     /**
      * The styles for hyperlinks in the code
      * @var array
      */
-    var $link_styles = array();
+    private $link_styles = array();
 
     /**
      * Whether CSS IDs should be added to the code
      * @var boolean
      */
-    var $add_ids = false;
+    private $add_ids = false;
 
     /**
      * Lines that should be highlighted extra
      * @var array
      */
-    var $highlight_extra_lines = array();
+    private $highlight_extra_lines = array();
 
     /**
      * Styles of lines that should be highlighted extra
      * @var array
      */
-    var $highlight_extra_lines_styles = array();
+    private $highlight_extra_lines_styles = array();
 
     /**
      * Styles of extra-highlighted lines
      * @var string
      */
-    var $highlight_extra_lines_style = 'background-color: #ffc;';
+    private $highlight_extra_lines_style = 'background-color: #ffc;';
 
     /**
      * The line ending
@@ -312,119 +307,118 @@ class Highlighter {
      * Otherwise, all instances of \n will be replaced with $line_ending
      * @var string
      */
-    var $line_ending = null;
+    private $line_ending = null;
 
     /**
      * Number at which line numbers should start at
      * @var int
      */
-    var $line_numbers_start = 1;
+    private $line_numbers_start = 1;
 
     /**
      * The overall style for this code block
      * @var string
      */
-    var $overall_style = 'font-family:monospace;';
+    private $overall_style = 'font-family:monospace;';
 
     /**
      *  The style for the actual code
      * @var string
      */
-    var $code_style = 'font: normal normal 1em/1.2em monospace; margin:0; padding:0; background:none; vertical-align:top;';
+    private $code_style = 'font: normal normal 1em/1.2em monospace; margin:0; padding:0; background:none; vertical-align:top;';
 
     /**
      * The overall class for this code block
      * @var string
      */
-    var $overall_class = '';
+    private $overall_class = '';
 
     /**
      * The overall ID for this code block
      * @var string
      */
-    var $overall_id = '';
+    private $overall_id = '';
 
     /**
      * Line number styles
      * @var string
      */
-    var $line_style1 = 'font-weight: normal; vertical-align:top;';
+    private $line_style1 = 'font-weight: normal; vertical-align:top;';
 
     /**
      * Line number styles for fancy lines
      * @var string
      */
-    var $line_style2 = 'font-weight: bold; vertical-align:top;';
+    private $line_style2 = 'font-weight: bold; vertical-align:top;';
 
     /**
      * Style for line numbers when GESHI_HEADER_PRE_TABLE is chosen
      * @var string
      */
-    var $table_linenumber_style = 'width:1px;text-align:right;margin:0;padding:0 2px;vertical-align:top;';
+    private $table_linenumber_style = 'width:1px;text-align:right;margin:0;padding:0 2px;vertical-align:top;';
 
     /**
      * Flag for how line numbers are displayed
      * @var boolean
      */
-    var $line_numbers = GESHI_NO_LINE_NUMBERS;
+    private $line_numbers = GESHI_NO_LINE_NUMBERS;
 
     /**
      * Flag to decide if multi line spans are allowed. Set it to false to make sure
      * each tag is closed before and reopened after each linefeed.
      * @var boolean
      */
-    var $allow_multiline_span = true;
+    private $allow_multiline_span = true;
 
     /**
      * The "nth" value for fancy line highlighting
      * @var int
      */
-    var $line_nth_row = 0;
+    private $line_nth_row = 0;
 
     /**
      * The size of tab stops
      * @var int
      */
-    var $tab_width = 8;
+    private $tab_width = 8;
 
     /**
      * Should we use language-defined tab stop widths?
      * @var int
      */
-    var $use_language_tab_width = false;
+    private $use_language_tab_width = false;
 
     /**
      * Default target for keyword links
      * @var string
      */
-    var $link_target = '';
+    private $link_target = '';
 
     /**
      * The encoding to use for entity encoding
      * NOTE: Used with Escape Char Sequences to fix UTF-8 handling (cf. SF#2037598)
      * @var string
      */
-    var $encoding = 'utf-8';
+    private $encoding = 'utf-8';
 
     /**
      * Should keywords be linked?
      * @var boolean
      */
-    var $keyword_links = true;
+    private $keyword_links = true;
 
     /**
      * Currently loaded language
      * @var string
      */
-    var $loaded_language = '';
+    private $loaded_language = '';
 
     /**
      * Wether the caches needed for parsing are built or not
      *
      * @var bool
-     * @since 1.0.8
      */
-    var $parse_cache_built = false;
+    private $parse_cache_built = false;
 
     /**
      * Work around for Suhosin Patch with disabled /e modifier
@@ -439,22 +433,19 @@ class Highlighter {
      * </blockquote>
      *
      * @var array
-     * @since 1.0.8
      */
-    var $_kw_replace_group = 0;
-    var $_rx_key = 0;
+    private $_kw_replace_group = 0;
+    private $_rx_key = 0;
 
     /**
      * some "callback parameters" for handle_multiline_regexps
      *
-     * @since 1.0.8
-     * @access private
      * @var string
      */
-    var $_hmr_before = '';
-    var $_hmr_replace = '';
-    var $_hmr_after = '';
-    var $_hmr_key = 0;
+    private $_hmr_before = '';
+    private $_hmr_replace = '';
+    private $_hmr_after = '';
+    private $_hmr_key = 0;
 
     /** @var LanguageCache */
     private $languageCache = null;
