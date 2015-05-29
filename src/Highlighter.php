@@ -81,16 +81,6 @@ define('GESHI_CAPS_UPPER', 1);
 /** Leave keywords found as the case that they are */
 define('GESHI_CAPS_LOWER', 2);
 
-// Link style constants
-/** Links in the source in the :link state */
-define('GESHI_LINK', 0);
-/** Links in the source in the :hover state */
-define('GESHI_HOVER', 1);
-/** Links in the source in the :active state */
-define('GESHI_ACTIVE', 2);
-/** Links in the source in the :visited state */
-define('GESHI_VISITED', 3);
-
 /**#@+
  *  @access private
  */
@@ -253,29 +243,11 @@ class Highlighter {
     private $footer_content = '';
 
     /**
-     * The style of the header block
-     * @var string
-     */
-    private $header_content_style = '';
-
-    /**
-     * The style of the footer block
-     * @var string
-     */
-    private $footer_content_style = '';
-
-    /**
      * Tells if a block around the highlighted source should be forced
      * if not using line numbering
      * @var boolean
      */
     private $force_code_block = false;
-
-    /**
-     * The styles for hyperlinks in the code
-     * @var array
-     */
-    private $link_styles = array();
 
     /**
      * Whether CSS IDs should be added to the code
@@ -314,12 +286,6 @@ class Highlighter {
      * @var int
      */
     private $line_numbers_start = 1;
-
-    /**
-     * The overall style for this code block
-     * @var string
-     */
-    private $overall_style = 'font-family:monospace;';
 
     /**
      *  The style for the actual code
@@ -680,23 +646,6 @@ class Highlighter {
         }
 
         $this->header_type = $type;
-    }
-
-    /**
-     * Sets the styles for the code that will be outputted
-     * when this object is parsed. The style should be a
-     * string of valid stylesheet declarations
-     *
-     * @param string $style The overall style for the outputted code block
-     * @param boolean $preserve_defaults Whether to merge the styles with the current styles or not
-     * @since 1.0.0
-     */
-    function set_overall_style($style, $preserve_defaults = false) {
-        if (!$preserve_defaults) {
-            $this->overall_style = $style;
-        } else {
-            $this->overall_style .= $style;
-        }
     }
 
     /**
@@ -1408,7 +1357,7 @@ class Highlighter {
 
     /**
      * Setup caches needed for styling. This is automatically called in
-     * parse_code() and get_stylesheet() when appropriate. This function helps
+     * parse_code() when appropriate. This function helps
      * stylesheet generators as they rely on some style information being
      * preprocessed
      *
@@ -3000,16 +2949,9 @@ class Highlighter {
         // Replace <DOT> with . for urls
         $stuff_to_parse = str_replace('<DOT>', '.', $stuff_to_parse);
         // Replace <|UR1| with <a href= for urls also
-        if (isset($this->link_styles[GESHI_LINK])) {
-            $stuff_to_parse = str_replace('<|UR1|', '<a' . $this->link_target . ' href=', $stuff_to_parse);
-        } else {
-            $stuff_to_parse = str_replace('<|UR1|', '<a' . $this->link_target . ' href=', $stuff_to_parse);
-        }
+        $stuff_to_parse = str_replace('<|UR1|', '<a' . $this->link_target . ' href=', $stuff_to_parse);
 
-        //
         // NOW we add the span thingy ;)
-        //
-
         $stuff_to_parse = str_replace('<|', '<span', $stuff_to_parse);
         $stuff_to_parse = str_replace ( '|>', '</span>', $stuff_to_parse );
         return substr($stuff_to_parse, 1);
@@ -3477,199 +3419,6 @@ class Highlighter {
      */
     function _genCSSName($name){
         return (is_numeric($name[0]) ? '_' : '') . $name;
-    }
-
-    /**
-     * Returns a stylesheet for the highlighted code. If $economy mode
-     * is true, we only return the stylesheet declarations that matter for
-     * this code block instead of the whole thing
-     *
-     * @param  boolean $economy_mode Whether to use economy mode or not
-     * @return string A stylesheet built on the data for the current language
-     * @since  1.0.0
-     */
-    function get_stylesheet($economy_mode = true) {
-        //Check if the style rearrangements have been processed ...
-        //This also does some preprocessing to check which style groups are useable ...
-        if(!isset($this->language_data['NUMBERS_CACHE'])) {
-            $this->build_style_cache();
-        }
-
-        // First, work out what the selector should be. If there's an ID,
-        // that should be used, the same for a class. Otherwise, a selector
-        // of '' means that these styles will be applied anywhere
-        if ($this->overall_id) {
-            $selector = '#' . $this->_genCSSName($this->overall_id);
-        } else {
-            $selector = '.' . $this->_genCSSName($this->language);
-            if ($this->overall_class) {
-                $selector .= '.' . $this->_genCSSName($this->overall_class);
-            }
-        }
-        $selector .= ' ';
-
-        // Header of the stylesheet
-        if (!$economy_mode) {
-            $stylesheet = "/**\n".
-                " * GeSHi Dynamically Generated Stylesheet\n".
-                " * --------------------------------------\n".
-                " * Dynamically generated stylesheet for {$this->language}\n".
-                " * CSS class: {$this->overall_class}, CSS id: {$this->overall_id}\n".
-                " * GeSHi (C) 2004 - 2007 Nigel McNie, 2007 - 2014 Benny Baumann\n" .
-                " * (http://qbnz.com/highlighter/ and http://geshi.org/)\n".
-                " * --------------------------------------\n".
-                " */\n";
-        } else {
-            $stylesheet = "/**\n".
-                " * GeSHi (C) 2004 - 2007 Nigel McNie, 2007 - 2014 Benny Baumann\n" .
-                " * (http://qbnz.com/highlighter/ and http://geshi.org/)\n".
-                " */\n";
-        }
-
-        // Set the <ol> to have no effect at all if there are line numbers
-        // (<ol>s have margins that should be destroyed so all layout is
-        // controlled by the set_overall_style method, which works on the
-        // <pre> or <div> container). Additionally, set default styles for lines
-        if (!$economy_mode || $this->line_numbers != GESHI_NO_LINE_NUMBERS) {
-            //$stylesheet .= "$selector, {$selector}ol, {$selector}ol li {margin: 0;}\n";
-            $stylesheet .= "$selector.de1, $selector.de2 {{$this->code_style}}\n";
-        }
-
-        // Add overall styles
-        // note: neglect economy_mode, empty styles are meaningless
-        if ($this->overall_style != '') {
-            $stylesheet .= "$selector {{$this->overall_style}}\n";
-        }
-
-        // Add styles for links
-        // note: economy mode does not make _any_ sense here
-        //       either the style is empty and thus no selector is needed
-        //       or the appropriate key is given.
-        foreach ($this->link_styles as $key => $style) {
-            if ($style != '') {
-                switch ($key) {
-                    case GESHI_LINK:
-                        $stylesheet .= "{$selector}a:link {{$style}}\n";
-                        break;
-                    case GESHI_HOVER:
-                        $stylesheet .= "{$selector}a:hover {{$style}}\n";
-                        break;
-                    case GESHI_ACTIVE:
-                        $stylesheet .= "{$selector}a:active {{$style}}\n";
-                        break;
-                    case GESHI_VISITED:
-                        $stylesheet .= "{$selector}a:visited {{$style}}\n";
-                        break;
-                }
-            }
-        }
-
-        // Header and footer
-        // note: neglect economy_mode, empty styles are meaningless
-        if ($this->header_content_style != '') {
-            $stylesheet .= "$selector.head {{$this->header_content_style}}\n";
-        }
-        if ($this->footer_content_style != '') {
-            $stylesheet .= "$selector.foot {{$this->footer_content_style}}\n";
-        }
-
-        // Simple line number styles
-        if ((!$economy_mode || $this->line_numbers != GESHI_NO_LINE_NUMBERS) && $this->line_style1 != '') {
-            $stylesheet .= "{$selector}li, {$selector}.li1 {{$this->line_style1}}\n";
-        }
-        if ((!$economy_mode || $this->line_numbers != GESHI_NO_LINE_NUMBERS) && $this->table_linenumber_style != '') {
-            $stylesheet .= "{$selector}.ln {{$this->table_linenumber_style}}\n";
-        }
-        // If there is a style set for fancy line numbers, echo it out
-        if ((!$economy_mode || $this->line_numbers == GESHI_FANCY_LINE_NUMBERS) && $this->line_style2 != '') {
-            $stylesheet .= "{$selector}.li2 {{$this->line_style2}}\n";
-        }
-
-        // note: empty styles are meaningless
-        foreach ($this->language_data['STYLES']['KEYWORDS'] as $group => $styles) {
-            if ($styles != '' && (!$economy_mode ||
-                (isset($this->lexic_permissions['KEYWORDS'][$group]) &&
-                $this->lexic_permissions['KEYWORDS'][$group]))) {
-                $stylesheet .= "$selector.kw$group {{$styles}}\n";
-            }
-        }
-        foreach ($this->language_data['STYLES']['COMMENTS'] as $group => $styles) {
-            if ($styles != '' && (!$economy_mode ||
-                (isset($this->lexic_permissions['COMMENTS'][$group]) &&
-                $this->lexic_permissions['COMMENTS'][$group]) ||
-                (!empty($this->language_data['COMMENT_REGEXP']) &&
-                !empty($this->language_data['COMMENT_REGEXP'][$group])))) {
-                $stylesheet .= "$selector.co$group {{$styles}}\n";
-            }
-        }
-        foreach ($this->language_data['STYLES']['ESCAPE_CHAR'] as $group => $styles) {
-            if ($styles != '' && (!$economy_mode || $this->lexic_permissions['ESCAPE_CHAR'])) {
-                // NEW: since 1.0.8 we have to handle hardescapes
-                if ($group === 'HARD') {
-                    $group = '_h';
-                }
-                $stylesheet .= "$selector.es$group {{$styles}}\n";
-            }
-        }
-        foreach ($this->language_data['STYLES']['BRACKETS'] as $group => $styles) {
-            if ($styles != '' && (!$economy_mode || $this->lexic_permissions['BRACKETS'])) {
-                $stylesheet .= "$selector.br$group {{$styles}}\n";
-            }
-        }
-        foreach ($this->language_data['STYLES']['SYMBOLS'] as $group => $styles) {
-            if ($styles != '' && (!$economy_mode || $this->lexic_permissions['SYMBOLS'])) {
-                $stylesheet .= "$selector.sy$group {{$styles}}\n";
-            }
-        }
-        foreach ($this->language_data['STYLES']['STRINGS'] as $group => $styles) {
-            if ($styles != '' && (!$economy_mode || $this->lexic_permissions['STRINGS'])) {
-                // NEW: since 1.0.8 we have to handle hardquotes
-                if ($group === 'HARD') {
-                    $group = '_h';
-                }
-                $stylesheet .= "$selector.st$group {{$styles}}\n";
-            }
-        }
-        foreach ($this->language_data['STYLES']['NUMBERS'] as $group => $styles) {
-            if ($styles != '' && (!$economy_mode || $this->lexic_permissions['NUMBERS'])) {
-                $stylesheet .= "$selector.nu$group {{$styles}}\n";
-            }
-        }
-        foreach ($this->language_data['STYLES']['METHODS'] as $group => $styles) {
-            if ($styles != '' && (!$economy_mode || $this->lexic_permissions['METHODS'])) {
-                $stylesheet .= "$selector.me$group {{$styles}}\n";
-            }
-        }
-        // note: neglect economy_mode, empty styles are meaningless
-        foreach ($this->language_data['STYLES']['SCRIPT'] as $group => $styles) {
-            if ($styles != '') {
-                $stylesheet .= "$selector.sc$group {{$styles}}\n";
-            }
-        }
-        foreach ($this->language_data['STYLES']['REGEXPS'] as $group => $styles) {
-            if ($styles != '' && (!$economy_mode ||
-                (isset($this->lexic_permissions['REGEXPS'][$group]) &&
-                $this->lexic_permissions['REGEXPS'][$group]))) {
-                if (is_array($this->language_data['REGEXPS'][$group]) &&
-                    array_key_exists(GESHI_CLASS, $this->language_data['REGEXPS'][$group])) {
-                    $stylesheet .= "$selector.";
-                    $stylesheet .= $this->language_data['REGEXPS'][$group][GESHI_CLASS];
-                    $stylesheet .= " {{$styles}}\n";
-                } else {
-                    $stylesheet .= "$selector.re$group {{$styles}}\n";
-                }
-            }
-        }
-        // Styles for lines being highlighted extra
-        if (!$economy_mode || (count($this->highlight_extra_lines)!=count($this->highlight_extra_lines_styles))) {
-            $stylesheet .= "{$selector}.ln-xtra, {$selector}li.ln-xtra, {$selector}div.ln-xtra {{$this->highlight_extra_lines_style}}\n";
-        }
-        $stylesheet .= "{$selector}span.xtra { display:block; }\n";
-        foreach ($this->highlight_extra_lines_styles as $lineid => $linestyle) {
-            $stylesheet .= "{$selector}.lx$lineid, {$selector}li.lx$lineid, {$selector}div.lx$lineid {{$linestyle}}\n";
-        }
-
-        return $stylesheet;
     }
 
     /**
