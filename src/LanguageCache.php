@@ -21,6 +21,7 @@
 namespace Chechil;
 
 use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * Manages a LRU cache of language information
@@ -107,6 +108,40 @@ class LanguageCache {
             $result = array_unique($result);
         }
         return $result;
+    }
+
+    /**
+     * Returns a list of human-readable names of supported languages
+     *
+     * @return array Language code => language name
+     */
+    public function getLanguageNames() {
+        $file = __DIR__ . '/data/languageNames.json';
+        $content = file_get_contents($file);
+        if ($content === false) {
+            throw new RuntimeException("Error reading file $file");
+        }
+        $result = json_decode($content, true);
+        if (!is_array($result)) {
+            throw new RuntimeException("File $file has invalid contents");
+        }
+        foreach (array_keys($this->customLanguages) as $code) {
+            $langData = $this->get($code);
+            $result[$code] = $langData['LANG_NAME'];
+        }
+        return $result;
+    }
+
+    /**
+     * Returns human-readable name for the given language code
+     *
+     * @param string $language Language code
+     * @return string
+     * @throws InvalidLanguageCodeException
+     */
+    public function getLanguageName($language) {
+        $data = $this->get($language);
+        return $data['LANG_NAME'];
     }
 
     /**

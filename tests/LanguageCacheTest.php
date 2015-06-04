@@ -34,4 +34,26 @@ class LanguageCacheTest extends PHPUnit_Framework_TestCase {
         $this->assertContains('html5', $list);
         $this->assertContains('fnord', $list);
     }
+
+    /**
+     * @dataProvider provideGetLanguageNames
+     */
+    public function testGetLanguageNames($code, $expected) {
+        $cache = new Chechil\LanguageCache();
+        $cache->registerCustomLanguage('dummy', __DIR__ . '/data/dummyLanguage.php');
+        $list = $cache->getLanguageNames();
+        if (!$expected) {
+            $this->assertFalse(isset($list[$code]), "Language $code shouldn't exist");
+        }
+        $this->assertEquals($expected, $list[$code]);
+    }
+
+    public function provideGetLanguageNames() {
+        return array(
+            array('php', 'PHP'),
+            array('cpp', 'C++'),
+            array('dummy', 'Dummy!'),
+            array('bogus', false),
+        );
+    }
 }
