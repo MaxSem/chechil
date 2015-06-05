@@ -878,17 +878,6 @@ class Highlighter {
     }
 
     /**
-     * Disables all highlighting
-     *
-     * @since 1.0.0
-     * @todo  Rewrite with array traversal
-     * @deprecated In favour of enable_highlighting
-     */
-    function disable_highlighting() {
-        $this->enable_highlighting(false);
-    }
-
-    /**
      * Enables all highlighting
      *
      * The optional flag parameter was added in version 1.0.7.21 and can be used
