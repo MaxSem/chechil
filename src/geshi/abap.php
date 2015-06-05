@@ -97,7 +97,7 @@ $language_data = array(
         // "assign dref->* to <fs>" statement)
         2 => '/^\*.*?$/m'
         ),
-    'CASE_KEYWORDS' => 0,
+    'CASE_KEYWORDS' => GESHI_CAPS_NO_CHANGE,
     'QUOTEMARKS' => array(
         1 => "'",
         2 => "`"

@@ -75,41 +75,41 @@ define('GESHI_HEADER_PRE_TABLE', 4);
 
 // Capatalisation constants
 /** Lowercase keywords found */
-define('GESHI_CAPS_NO_CHANGE', 0);
+define('GESHI_CAPS_NO_CHANGE', 'no change');
 /** Uppercase keywords found */
-define('GESHI_CAPS_UPPER', 1);
+define('GESHI_CAPS_UPPER', 'upper');
 /** Leave keywords found as the case that they are */
-define('GESHI_CAPS_LOWER', 2);
+define('GESHI_CAPS_LOWER', 'lower');
 
 // When strict mode applies for a language
 /** Strict mode never applies (this is the most common) */
-define('GESHI_NEVER', 0);
+define('GESHI_NEVER', 'never');
 /** Strict mode *might* apply, and can be enabled or
     disabled by {@link GeSHi->enable_strict_mode()} */
-define('GESHI_MAYBE', 1);
+define('GESHI_MAYBE', 'maybe');
 /** Strict mode always applies */
-define('GESHI_ALWAYS', 2);
+define('GESHI_ALWAYS', 'always');
 
 // Advanced regexp handling constants, used in language files
 /** The key of the regex array defining what to search for */
-define('GESHI_SEARCH', 0);
+define('GESHI_SEARCH', 'find');
 /** The key of the regex array defining what bracket group in a
     matched search to use as a replacement */
-define('GESHI_REPLACE', 1);
+define('GESHI_REPLACE', 'replace');
 /** The key of the regex array defining any modifiers to the regular expression */
-define('GESHI_MODIFIERS', 2);
+define('GESHI_MODIFIERS', 'modifiers');
 /** The key of the regex array defining what bracket group in a
     matched search to put before the replacement */
-define('GESHI_BEFORE', 3);
+define('GESHI_BEFORE', 'before');
 /** The key of the regex array defining what bracket group in a
     matched search to put after the replacement */
-define('GESHI_AFTER', 4);
+define('GESHI_AFTER', 'after');
 /** The key of the regex array defining a custom keyword to use
     for this regexp's html tag class */
-define('GESHI_CLASS', 5);
+define('GESHI_CLASS', 'class');
 
 /** Used in language files to mark comments */
-define('GESHI_COMMENTS', 0);
+define('GESHI_COMMENTS', 'comments');
 
 /** some old PHP / PCRE subpatterns only support up to xxx subpatterns in
     regular expressions. Set this to false if your PCRE lib is up to date
@@ -1529,7 +1529,7 @@ class Highlighter {
         $stuff_to_parse   = '';
         $endresult        = '';
 
-        if ($this->strict_mode) {
+        if ($this->strict_mode != GESHI_NEVER) {
             // Break the source into bits. Each bit will be a portion of the code
             // within script delimiters - for example, HTML between < and >
             $k = 0;

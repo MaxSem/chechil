@@ -41,7 +41,7 @@ $language_data = array (
     'LANG_NAME' => 'OCaml (brief)',
     'COMMENT_SINGLE' => array(),
     'COMMENT_MULTI' => array('(*' => '*)'),
-    'CASE_KEYWORDS' => 0,
+    'CASE_KEYWORDS' => GESHI_CAPS_NO_CHANGE,
     'QUOTEMARKS' => array('"'),
     'ESCAPE_CHAR' => "",
     'KEYWORDS' => array(

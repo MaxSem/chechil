@@ -57,7 +57,7 @@ $language_data = array (
     'LANG_NAME' => 'SQL',
     'COMMENT_SINGLE' => array(1 =>'--'),
     'COMMENT_MULTI' => array('/*' => '*/'),
-    'CASE_KEYWORDS' => 1,
+    'CASE_KEYWORDS' => GESHI_CAPS_UPPER,
     'QUOTEMARKS' => array("'", '"', '`'),
     'ESCAPE_CHAR' => '\\',
     'KEYWORDS' => array(

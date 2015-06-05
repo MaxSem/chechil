@@ -39,7 +39,7 @@ $language_data = array (
         2 => "/-->/",
         3 => "/{-(?:(?R)|.)-}/s", //Nested Comments
         ),
-    'CASE_KEYWORDS' => 0,
+    'CASE_KEYWORDS' => GESHI_CAPS_NO_CHANGE,
     'QUOTEMARKS' => array('"',"'"),
     'ESCAPE_CHAR' => '\\',
     'KEYWORDS' => array(
