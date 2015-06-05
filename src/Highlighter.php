@@ -81,9 +81,6 @@ define('GESHI_CAPS_UPPER', 1);
 /** Leave keywords found as the case that they are */
 define('GESHI_CAPS_LOWER', 2);
 
-/**#@+
- *  @access private
- */
 // When strict mode applies for a language
 /** Strict mode never applies (this is the most common) */
 define('GESHI_NEVER', 0);
@@ -440,7 +437,7 @@ class Highlighter {
      * @return string The name for the current language
      * @throws RuntimeException
      */
-    function getLanguageName() {
+    public function getLanguageName() {
         if (!isset($this->language_data['LANG_NAME'])) {
             throw new RuntimeException(__METHOD__ . '(): language not loaded');
         }
@@ -624,7 +621,7 @@ class Highlighter {
      *
      * @param string $class The class name to use for this block of code
      */
-    function set_overall_class($class) {
+    public function set_overall_class($class) {
         $this->overall_class = $class;
     }
 
@@ -634,7 +631,7 @@ class Highlighter {
      *
      * @param string $id The ID to use for this block of code
      */
-    function set_overall_id($id) {
+    public function set_overall_id($id) {
         $this->overall_id = $id;
     }
 
@@ -673,7 +670,7 @@ class Highlighter {
      *
      * @param boolean $flag Wether multiline spans are allowed or not
      */
-    function enable_multiline_span($flag) {
+    public function enable_multiline_span($flag) {
         $this->allow_multiline_span = (bool) $flag;
     }
 
@@ -683,7 +680,7 @@ class Highlighter {
      * @see enable_multiline_span
      * @return bool
      */
-    function get_multiline_span() {
+    public function get_multiline_span() {
         return $this->allow_multiline_span;
     }
 
@@ -693,7 +690,7 @@ class Highlighter {
      * @param int     $key The key of the keyword group to turn on or off
      * @param bool    $flag Whether to turn highlighting for that group on or off
      */
-    function set_keyword_group_highlighting($key, $flag = true) {
+    public function set_keyword_group_highlighting($key, $flag = true) {
         $this->lexic_permissions['KEYWORDS'][$key] = ($flag) ? true : false;
     }
 
@@ -703,7 +700,7 @@ class Highlighter {
      * @param int     $key The key of the comment group to turn on or off
      * @param bool    $flag Whether to turn highlighting for that group on or off
      */
-    function set_comments_highlighting($key, $flag = true) {
+    public function set_comments_highlighting($key, $flag = true) {
         $this->lexic_permissions['COMMENTS'][$key] = ($flag) ? true : false;
     }
 
@@ -712,7 +709,7 @@ class Highlighter {
      *
      * @param bool $flag Whether to turn highlighting for escape characters on or off
      */
-    function set_escape_characters_highlighting($flag = true) {
+    public function set_escape_characters_highlighting($flag = true) {
         $this->lexic_permissions['ESCAPE_CHAR'] = ($flag) ? true : false;
     }
 
@@ -725,7 +722,7 @@ class Highlighter {
      * @param bool $flag Whether to turn highlighting for brackets on or off
      * @deprecated In favour of set_symbols_highlighting
      */
-    function set_brackets_highlighting($flag) {
+    public function set_brackets_highlighting($flag) {
         $this->lexic_permissions['BRACKETS'] = ($flag) ? true : false;
     }
 
@@ -734,7 +731,7 @@ class Highlighter {
      *
      * @param bool $flag Whether to turn highlighting for symbols on or off
      */
-    function set_symbols_highlighting($flag) {
+    public function set_symbols_highlighting($flag) {
         // Update lexic permissions for this symbol group
         $this->lexic_permissions['SYMBOLS'] = ($flag) ? true : false;
 
@@ -747,7 +744,7 @@ class Highlighter {
      *
      * @param bool $flag Whether to turn highlighting for strings on or off
      */
-    function set_strings_highlighting($flag) {
+    public function set_strings_highlighting($flag) {
         $this->lexic_permissions['STRINGS'] = ($flag) ? true : false;
     }
 
@@ -756,7 +753,7 @@ class Highlighter {
      *
      * @param bool $flag Whether to turn highlighting for numbers on or off
      */
-    function set_numbers_highlighting($flag) {
+    public function set_numbers_highlighting($flag) {
         $this->lexic_permissions['NUMBERS'] = ($flag) ? true : false;
     }
 
@@ -765,7 +762,7 @@ class Highlighter {
      *
      * @param bool $flag Whether to turn highlighting for methods on or off
      */
-    function set_methods_highlighting($flag) {
+    public function set_methods_highlighting($flag) {
         $this->lexic_permissions['METHODS'] = ($flag) ? true : false;
     }
 
@@ -775,7 +772,7 @@ class Highlighter {
      * @param int     $key The key of the regular expression group to turn on or off
      * @param bool    $flag Whether to turn highlighting for the regular expression group on or off
      */
-    function set_regexps_highlighting($key, $flag) {
+    public function set_regexps_highlighting($key, $flag) {
         $this->lexic_permissions['REGEXPS'][$key] = ($flag) ? true : false;
     }
 
@@ -785,7 +782,7 @@ class Highlighter {
      * @param int $key The key of the keyword group to change the case sensitivity of
      * @param bool $case Whether to check in a case sensitive manner or not
      */
-    function set_case_sensitivity($key, $case) {
+    public function set_case_sensitivity($key, $case) {
         $this->language_data['CASE_SENSITIVE'][$key] = ($case) ? true : false;
     }
 
@@ -798,7 +795,7 @@ class Highlighter {
      *
      * @param int $case A constant specifying what to do with matched keywords
      */
-    function set_case_keywords($case) {
+    public function set_case_keywords($case) {
         if (in_array($case, array(
             GESHI_CAPS_NO_CHANGE, GESHI_CAPS_UPPER, GESHI_CAPS_LOWER))) {
             $this->language_data['CASE_KEYWORDS'] = $case;
@@ -812,7 +809,7 @@ class Highlighter {
      *
      * @param int $width The tab width
      */
-    function set_tab_width($width) {
+    public function set_tab_width($width) {
         $this->tab_width = intval($width);
 
         //Check if it fit's the constraints:
@@ -827,7 +824,7 @@ class Highlighter {
      *
      * @param bool $use Whether to use language-specific tab-stop widths
      */
-    function set_use_language_tab_width($use) {
+    public function set_use_language_tab_width($use) {
         $this->use_language_tab_width = (bool) $use;
     }
 
@@ -837,7 +834,7 @@ class Highlighter {
      *
      * @return int Tab width
      */
-    function get_real_tab_width() {
+    public function get_real_tab_width() {
         if (!$this->use_language_tab_width ||
             !isset($this->language_data['TAB_WIDTH'])) {
             return $this->tab_width;
@@ -853,7 +850,7 @@ class Highlighter {
      *
      * @param bool $mode Whether to enable strict mode or not
      */
-    function enable_strict_mode($mode = true) {
+    public function enable_strict_mode($mode = true) {
         if (GESHI_MAYBE == $this->language_data['STRICT_MODE_APPLIES']) {
             $this->strict_mode = ($mode) ? GESHI_ALWAYS : GESHI_NEVER;
         }
@@ -868,7 +865,7 @@ class Highlighter {
      * @param bool $flag A flag specifying whether to enable or disable all highlighting
      * @todo  Rewrite with array traversal
      */
-    function enable_highlighting($flag = true) {
+    public function enable_highlighting($flag = true) {
         $flag = $flag ? true : false;
         foreach ($this->lexic_permissions as $key => $value) {
             if (is_array($value)) {
@@ -891,7 +888,7 @@ class Highlighter {
      *       a extension->lang lookup?)
      * @return int|string
      */
-    static function get_language_name_from_extension( $extension, $lookup = array() ) {
+    private static function get_language_name_from_extension( $extension, $lookup = array() ) {
         $extension = strtolower($extension);
 
         if ( !is_array($lookup) || empty($lookup)) {
@@ -997,7 +994,7 @@ class Highlighter {
      * @param array  $lookup A lookup array to use instead of the default one
      * @todo Complete rethink of this and above method
      */
-    function load_from_file($file_name, $lookup = array()) {
+    public function load_from_file($file_name, $lookup = array()) {
         //@FIXME: rewrite
         if (is_readable($file_name)) {
             $this->setSource(file_get_contents($file_name));
@@ -1013,7 +1010,7 @@ class Highlighter {
      * @param int    $key The key of the keyword group to add the keyword to
      * @param string $word The word to add to the keyword group
      */
-    function add_keyword($key, $word) {
+    public function add_keyword($key, $word) {
         if (!is_array($this->language_data['KEYWORDS'][$key])) {
             $this->language_data['KEYWORDS'][$key] = array();
         }
@@ -1040,7 +1037,7 @@ class Highlighter {
      *               it might be too expensive to recompile the regexp list for every removal if you want to
      *               remove a lot of keywords.
      */
-    function remove_keyword($key, $word, $recompile = true) {
+    public function remove_keyword($key, $word, $recompile = true) {
         $key_to_remove = array_search($word, $this->language_data['KEYWORDS'][$key]);
         if ($key_to_remove !== false) {
             unset($this->language_data['KEYWORDS'][$key][$key_to_remove]);
@@ -1061,7 +1058,7 @@ class Highlighter {
      * @param array $words The words to use for the keyword group
      * @return bool
      */
-    function add_keyword_group($key, $styles, $case_sensitive = true, $words = array()) {
+    public function add_keyword_group($key, $styles, $case_sensitive = true, $words = array()) {
         $words = (array) $words;
         if  (empty($words)) {
             // empty word lists mess up highlighting
@@ -1085,7 +1082,7 @@ class Highlighter {
      *
      * @param int    $key The key of the keyword group to remove
      */
-    function remove_keyword_group ($key) {
+    public function remove_keyword_group ($key) {
         //Remove the keyword group internally
         unset($this->language_data['KEYWORDS'][$key]);
         unset($this->lexic_permissions['KEYWORDS'][$key]);
@@ -1101,7 +1098,7 @@ class Highlighter {
      *
      * @param int   $key The key of the keyword group to compile & optimize
      */
-    function optimize_keyword_group($key) {
+    public function optimize_keyword_group($key) {
         $this->language_data['CACHED_KEYWORD_LISTS'][$key] =
             $this->optimize_regexp_list($this->language_data['KEYWORDS'][$key]);
         $space_as_whitespace = false;
@@ -1130,7 +1127,7 @@ class Highlighter {
      *
      * @param string $content The content of the header block
      */
-    function set_header_content($content) {
+    public function set_header_content($content) {
         $this->header_content = $content;
     }
 
@@ -1139,7 +1136,7 @@ class Highlighter {
      *
      * @param string $content The content of the footer block
      */
-    function set_footer_content($content) {
+    public function set_footer_content($content) {
         $this->footer_content = $content;
     }
 
@@ -1149,7 +1146,7 @@ class Highlighter {
      *
      * @param bool $flag Tells whether to enable or disable this feature
      */
-    function enable_inner_code_block($flag) {
+    public function enable_inner_code_block($flag) {
         $this->force_code_block = (bool)$flag;
     }
 
@@ -1161,7 +1158,7 @@ class Highlighter {
      *               the url somewhere, it is replaced by the keyword
      *               that the URL is being made for
      */
-    function set_url_for_keyword_group($group, $url) {
+    public function set_url_for_keyword_group($group, $url) {
         $this->language_data['URLS'][$group] = $url;
     }
 
@@ -1170,7 +1167,7 @@ class Highlighter {
      *
      * @param string $target The target for links in the code, e.g. _blank
      */
-    function set_link_target($target) {
+    public function set_link_target($target) {
         if (!$target) {
             $this->link_target = '';
         } else {
@@ -1183,7 +1180,7 @@ class Highlighter {
      *
      * @param boolean $flag If true, IDs will be added to each line.
      */
-    function enable_ids($flag = true) {
+    public function enable_ids($flag = true) {
         $this->add_ids = ($flag) ? true : false;
     }
 
@@ -1200,7 +1197,7 @@ class Highlighter {
      *              special highlighting
      * @todo  Some data replication here that could be cut down on
      */
-    function highlight_lines_extra($lines, $style = null) {
+    public function highlight_lines_extra($lines, $style = null) {
         if (is_array($lines)) {
             //Split up the job using single lines at a time
             foreach ($lines as $line) {
@@ -1228,7 +1225,7 @@ class Highlighter {
      *
      * @param string $line_ending The new line-ending
      */
-    function set_line_ending($line_ending) {
+    public function set_line_ending($line_ending) {
         $this->line_ending = (string)$line_ending;
     }
 
@@ -1246,7 +1243,7 @@ class Highlighter {
      *
      * @param int $number The number to start line numbers at
      */
-    function start_line_numbers_at($number) {
+    public function start_line_numbers_at($number) {
         $this->line_numbers_start = abs(intval($number));
     }
 
@@ -1261,7 +1258,7 @@ class Highlighter {
      *
      * @param string $encoding The encoding to use for the source
      */
-    function set_encoding($encoding) {
+    public function set_encoding($encoding) {
         if ($encoding) {
           $this->encoding = strtolower($encoding);
         }
@@ -1272,7 +1269,7 @@ class Highlighter {
      *
      * @param boolean $enable If true, links will be added to keywords
      */
-    function enable_keyword_links($enable = true) {
+    public function enable_keyword_links($enable = true) {
         $this->keyword_links = (bool) $enable;
     }
 
@@ -1281,10 +1278,8 @@ class Highlighter {
      * parse_code() when appropriate. This function helps
      * stylesheet generators as they rely on some style information being
      * preprocessed
-     *
-     * @access private
      */
-    function build_style_cache() {
+    private function build_style_cache() {
         //Build the style cache needed to highlight numbers appropriate
         if($this->lexic_permissions['NUMBERS']) {
             //First check what way highlighting information for numbers are given
@@ -1331,10 +1326,8 @@ class Highlighter {
     /**
      * Setup caches needed for parsing. This is automatically called in parse_code() when appropriate.
      * This function makes stylesheet generators much faster as they do not need these caches.
-     *
-     * @access private
      */
-    function build_parse_cache() {
+    private function build_parse_cache() {
         // cache symbol regexp
         //As this is a costy operation, we avoid doing it for multiple groups ...
         //Instead we perform it for all symbols at once.
@@ -1504,7 +1497,7 @@ class Highlighter {
      *
      * @return string
      */
-    function parse_code () {
+    public function parse_code () {
         // Start the timer
         $start_time = microtime();
 
@@ -2366,9 +2359,8 @@ class Highlighter {
      * the code is in a pre block...
      *
      * @param  string $result The source to indent (reference!)
-     * @access private
      */
-    function indent(&$result) {
+    private function indent(&$result) {
         /// Replace tabs with the correct number of spaces
         if (false !== strpos($result, "\t")) {
             $lines = explode("\n", $result);
@@ -2465,9 +2457,8 @@ class Highlighter {
      *
      * @param  string $instr The keyword to change the case of
      * @return string The keyword with its case changed
-     * @access private
      */
-    function change_case($instr) {
+    public function change_case($instr) {
         switch ($this->language_data['CASE_KEYWORDS']) {
             case GESHI_CAPS_UPPER:
                 return strtoupper($instr);
@@ -2483,11 +2474,10 @@ class Highlighter {
      *
      * @param  string $match The keyword to add the Markup to
      * @return string The HTML for the match found
-     * @access private
      *
      * @todo   Get rid of ender in keyword links
      */
-    function handle_keyword_replace($match) {
+    public function handle_keyword_replace($match) {
         $k = $this->_kw_replace_group;
         $keyword = $match[0];
         $keyword_match = $match[1];
@@ -2544,9 +2534,8 @@ class Highlighter {
      *
      * @param array $matches the matches array
      * @return string The highlighted string
-     * @access private
      */
-    function handle_regexps_callback($matches) {
+    private function handle_regexps_callback($matches) {
         // before: "' style=\"' . call_user_func(\"$func\", '\\1') . '\"\\1|>'",
         return  ' style="' . call_user_func($this->language_data['STYLES']['REGEXPS'][$this->_rx_key], $matches[1]) . '"'. $matches[1] . '|>';
     }
@@ -2558,9 +2547,8 @@ class Highlighter {
      *
      * @param array $matches the matches array
      * @return string
-     * @access private
      */
-    function handle_multiline_regexps($matches) {
+    private function handle_multiline_regexps($matches) {
         $before = $this->_hmr_before;
         $after = $this->_hmr_after;
         if ($this->_hmr_replace) {
@@ -2589,11 +2577,10 @@ class Highlighter {
      * stuff like keywords, numbers and methods.
      *
      * @param string $stuff_to_parse The string to parse for keyword, numbers etc.
-     * @access private
      * @todo BUGGY! Why? Why not build string and return?
      * @return string
      */
-    function parse_non_string_part($stuff_to_parse) {
+    private function parse_non_string_part($stuff_to_parse) {
         $stuff_to_parse = ' ' . self::hsc($stuff_to_parse);
 
         // Highlight keywords
@@ -2874,9 +2861,8 @@ class Highlighter {
      *
      * @param string $start_time The time when parsing started
      * @param string $end_time The time when parsing ended
-     * @access private
      */
-    function set_time($start_time, $end_time) {
+    private function set_time($start_time, $end_time) {
         $start = explode(' ', $start_time);
         $end = explode(' ', $end_time);
         $this->time = $end[0] + $end[1] - $start[0] - $start[1];
@@ -2887,16 +2873,14 @@ class Highlighter {
      *
      * @return double The time taken to parse the code
      */
-    function get_time() {
+    public function get_time() {
         return $this->time;
     }
 
     /**
      * Merges arrays recursively, overwriting values of the first array with values of later arrays
-     *
-     * @access private
      */
-    function merge_arrays() {
+    private function merge_arrays() {
         $arrays = func_get_args();
         $narrays = count($arrays);
 
@@ -2934,9 +2918,8 @@ class Highlighter {
      * surrounding it to make it look nice.
      *
      * @param  string $parsed_code The code already parsed (reference!)
-     * @access private
      */
-    function finalise(&$parsed_code) {
+    private function finalise(&$parsed_code) {
 
         // Add HTML whitespace stuff if we're using the <div> header
         if ($this->header_type != GESHI_HEADER_PRE && $this->header_type != GESHI_HEADER_PRE_VALID) {
@@ -3120,9 +3103,8 @@ class Highlighter {
      * Creates the header for the code block (with correct attributes)
      *
      * @return string The header for the code block
-     * @access private
      */
-    function header() {
+    private function header() {
         // Get attributes needed
         /**
          * @todo   Document behaviour change - class is outputted regardless of whether
@@ -3130,7 +3112,7 @@ class Highlighter {
          */
         $attributes = ' class="chechil chechil-' . htmlspecialchars($this->language);
         if ($this->overall_class != '') {
-            $attributes .= " ".$this->_genCSSName($this->overall_class);
+            $attributes .= " ".$this->genCSSName($this->overall_class);
         }
         $attributes .= '"';
 
@@ -3191,9 +3173,8 @@ class Highlighter {
      * Returns the footer for the code block.
      *
      * @return string The footer for the code block
-     * @access private
      */
-    function footer() {
+    private function footer() {
         $footer = $this->footer_content;
         if ($footer) {
             if ($this->header_type == GESHI_HEADER_PRE) {
@@ -3279,7 +3260,6 @@ class Highlighter {
      * @copyright   Copyright 2007, {@link http://wikkawiki.org/CreditsPage
      *              Wikka Development Team}
      *
-     * @access      private
      * @param       string  $string string to be converted
      * @param       integer $quote_style
      *                      - ENT_COMPAT:   escapes &, <, > and double quote (default)
@@ -3322,7 +3302,7 @@ class Highlighter {
      * @param array $name
      * @return string
      */
-    function _genCSSName($name){
+    private function genCSSName($name){
         return (is_numeric($name[0]) ? '_' : '') . $name;
     }
 
@@ -3330,10 +3310,9 @@ class Highlighter {
      * Get's the style that is used for the specified line
      *
      * @param int $line The line number information is requested for
-     * @access private
      * @return null|string
      */
-    function get_line_style($line) {
+    private function get_line_style($line) {
         //$style = null;
         $style = null;
         if (isset($this->highlight_extra_lines_styles[$line])) {
@@ -3357,9 +3336,8 @@ class Highlighter {
     * @param string $regexp_delimiter your regular expression delimiter, @see preg_quote()
     * @return string for regular expression
     * @author Milian Wolff <mail@milianw.de>
-    * @access private
     */
-    function optimize_regexp_list($list, $regexp_delimiter = '/') {
+    private function optimize_regexp_list($list, $regexp_delimiter = '/') {
         $regex_chars = array('.', '\\', '+', '-', '*', '?', '[', '^', ']', '$',
             '(', ')', '{', '}', '=', '!', '<', '>', '|', ':', $regexp_delimiter);
         sort($list);
@@ -3375,7 +3353,7 @@ class Highlighter {
         for ($i = 0, $i_max = count($list); $i < $i_max; ++$i) {
             if ($cur_len > GESHI_MAX_PCRE_LENGTH) {
                 // seems like the length of this pcre is growing exorbitantly
-                $regexp_list[++$list_key] = $this->_optimize_regexp_list_tokens_to_string($tokens);
+                $regexp_list[++$list_key] = $this->optimize_regexp_list_tokens_to_string($tokens);
                 $num_subpatterns = substr_count($regexp_list[$list_key], '(?:');
                 $tokens = array();
                 $cur_len = 0;
@@ -3432,7 +3410,7 @@ class Highlighter {
                 }
                 if ($level == 0 && !empty($tokens)) {
                     // we can dump current tokens into the string and throw them away afterwards
-                    $new_entry = $this->_optimize_regexp_list_tokens_to_string($tokens);
+                    $new_entry = $this->optimize_regexp_list_tokens_to_string($tokens);
                     $new_subpatterns = substr_count($new_entry, '(?:');
                     if (GESHI_MAX_PCRE_SUBPATTERNS && $num_subpatterns + $new_subpatterns > GESHI_MAX_PCRE_SUBPATTERNS) {
                         $regexp_list[++$list_key] = $new_entry;
@@ -3457,7 +3435,7 @@ class Highlighter {
             unset($list[$i]);
         }
         // make sure the last tokens get converted as well
-        $new_entry = $this->_optimize_regexp_list_tokens_to_string($tokens);
+        $new_entry = $this->optimize_regexp_list_tokens_to_string($tokens);
         if (GESHI_MAX_PCRE_SUBPATTERNS && $num_subpatterns + substr_count($new_entry, '(?:') > GESHI_MAX_PCRE_SUBPATTERNS) {
             if ( !empty($regexp_list[$list_key]) ) {
               ++$list_key;
@@ -3479,16 +3457,15 @@ class Highlighter {
     * @param $recursed bool to know wether we recursed or not
     * @return string
     * @author Milian Wolff <mail@milianw.de>
-    * @access private
     */
-    function _optimize_regexp_list_tokens_to_string(&$tokens, $recursed = false) {
+    private function optimize_regexp_list_tokens_to_string(&$tokens, $recursed = false) {
         $list = '';
         foreach ($tokens as $token => $sub_tokens) {
             $list .= $token;
             $close_entry = isset($sub_tokens['']);
             unset($sub_tokens['']);
             if (!empty($sub_tokens)) {
-                $list .= '(?:' . $this->_optimize_regexp_list_tokens_to_string($sub_tokens, true) . ')';
+                $list .= '(?:' . $this->optimize_regexp_list_tokens_to_string($sub_tokens, true) . ')';
                 if ($close_entry) {
                     // make sub_tokens optional
                     $list .= '?';
