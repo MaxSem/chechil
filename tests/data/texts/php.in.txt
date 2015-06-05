@@ -16,5 +16,16 @@ class Classy extends SomeOther {
 ?>
 <h1>HTML inserts are bad<?php
 
-echo "The
-end";
+echo "It's
+the
+end ";
+
+echo <<<TEXT
+of
+ the
+  world
+   as
+    we
+     know
+      it
+TEXT;

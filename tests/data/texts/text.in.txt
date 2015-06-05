@@ -1,0 +1,6 @@
+This text file shouldn't really be highlighted that much.
+
+   Roses are red
+   Violets are <font color="blue">BLOOD RED</font>
+
+Amen.

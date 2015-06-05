@@ -16,6 +16,17 @@
 <span class="sy1">?&gt;</span>
 &lt;h1&gt;HTML inserts are bad<span class="kw2">&lt;?php</span>
 &nbsp;
-<span class="kw1">echo</span> <span class="st0">&quot;The
-end&quot;</span><span class="sy0">;</span>
+<span class="kw1">echo</span> <span class="st0">&quot;It's
+the
+end &quot;</span><span class="sy0">;</span>
+&nbsp;
+<span class="kw1">echo</span> <span class="co3">&lt;&lt;&lt;TEXT
+of
+ the
+  world
+   as
+    we
+     know
+      it
+TEXT</span><span class="sy0">;</span>
 &nbsp;</pre>
