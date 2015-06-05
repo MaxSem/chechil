@@ -60,4 +60,11 @@ class HighlighterTest extends PHPUnit_Framework_TestCase {
 		$chechil = new Chechil\Highlighter();
 		$chechil->enableLineNumbers(12345);
 	}
+
+	public function testLoadFromFile() {
+		$chechil = new Chechil\Highlighter();
+		$chechil->loadFromFile(__FILE__);
+		$this->assertEquals('php', $chechil->getLanguage());
+		$this->assertEquals('PHP', $chechil->getLanguageName()); // Check it's loaded
+	}
 }

@@ -374,7 +374,7 @@ class Highlighter {
      * Currently loaded language
      * @var string
      */
-    private $loaded_language = '';
+    private $loadedLanguage = '';
 
     /**
      * Wether the caches needed for parsing are built or not
@@ -469,7 +469,7 @@ class Highlighter {
 
         $language = strtolower($language);
 
-        if ($language == $this->loaded_language) {
+        if ($language == $this->loadedLanguage) {
             // this language is already loaded!
             return;
         }
@@ -482,6 +482,7 @@ class Highlighter {
 
         // Load the language for parsing
         $this->language_data = $this->getLanguageCache()->get($language);
+        $this->loadedLanguage = $language;
 
         // Set strict mode if should be set
         $this->strict_mode = $this->language_data['STRICT_MODE_APPLIES'];
@@ -535,6 +536,15 @@ class Highlighter {
         if(!isset($this->language_data['HARDCHAR'])) {
             $this->language_data['HARDCHAR'] = $this->language_data['ESCAPE_CHAR'];
         }
+    }
+
+    /**
+     * Returns currently used language
+     *
+     * @return string
+     */
+    public function getLanguage() {
+        return $this->loadedLanguage;
     }
 
     /**
@@ -884,11 +894,10 @@ class Highlighter {
      *
      * @param string $extension The extension to get a language name for
      * @param array $lookup A lookup array to use instead of the default one
-     * @todo Re-think about how this method works (maybe make it private and/or make it
-     *       a extension->lang lookup?)
+     * @todo Re-think about how this method works (maybe make a extension->lang lookup?)
      * @return int|string
      */
-    private static function get_language_name_from_extension( $extension, $lookup = array() ) {
+    private function detectLanguageFromExtension($extension, $lookup = array()) {
         $extension = strtolower($extension);
 
         if ( !is_array($lookup) || empty($lookup)) {
@@ -990,18 +999,22 @@ class Highlighter {
      *   'lang_name' ...
      * );</pre>
      *
-     * @param string $file_name The filename to load the source from
+     * @param string $fileName The filename to load the source from
      * @param array  $lookup A lookup array to use instead of the default one
-     * @todo Complete rethink of this and above method
+     * @throws RuntimeException
+     * @throws InvalidLanguageCodeException
      */
-    public function load_from_file($file_name, $lookup = array()) {
-        //@FIXME: rewrite
-        if (is_readable($file_name)) {
-            $this->setSource(file_get_contents($file_name));
-            $this->setLanguage(self::get_language_name_from_extension(substr(strrchr($file_name, '.'), 1), $lookup));
-        } else {
-            $this->error = GESHI_ERROR_FILE_NOT_READABLE;
+    public function loadFromFile($fileName, $lookup = array()) {
+        if (is_readable($fileName)) {
+            $source = file_get_contents($fileName);
+            if ($source !== false) {
+                $this->setSource($source);
+                $ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+                $this->setLanguage($this->detectLanguageFromExtension($ext), $lookup);
+                return;
+            }
         }
+        throw new RuntimeException("Can't read file $fileName");
     }
 
     /**
