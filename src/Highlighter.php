@@ -623,7 +623,6 @@ class Highlighter {
      * output
      *
      * @param string $class The class name to use for this block of code
-     * @since 1.0.0
      */
     function set_overall_class($class) {
         $this->overall_class = $class;
@@ -634,7 +633,6 @@ class Highlighter {
      * be used in a stylesheet to style this object's output
      *
      * @param string $id The ID to use for this block of code
-     * @since 1.0.0
      */
     function set_overall_id($id) {
         $this->overall_id = $id;
@@ -674,7 +672,6 @@ class Highlighter {
      * the code in an ordered list.
      *
      * @param boolean $flag Wether multiline spans are allowed or not
-     * @since 1.0.7.22
      */
     function enable_multiline_span($flag) {
         $this->allow_multiline_span = (bool) $flag;
@@ -695,7 +692,6 @@ class Highlighter {
      *
      * @param int     $key The key of the keyword group to turn on or off
      * @param bool    $flag Whether to turn highlighting for that group on or off
-     * @since 1.0.0
      */
     function set_keyword_group_highlighting($key, $flag = true) {
         $this->lexic_permissions['KEYWORDS'][$key] = ($flag) ? true : false;
@@ -706,7 +702,6 @@ class Highlighter {
      *
      * @param int     $key The key of the comment group to turn on or off
      * @param bool    $flag Whether to turn highlighting for that group on or off
-     * @since 1.0.0
      */
     function set_comments_highlighting($key, $flag = true) {
         $this->lexic_permissions['COMMENTS'][$key] = ($flag) ? true : false;
@@ -716,7 +711,6 @@ class Highlighter {
      * Turns highlighting on/off for escaped characters
      *
      * @param bool $flag Whether to turn highlighting for escape characters on or off
-     * @since 1.0.0
      */
     function set_escape_characters_highlighting($flag = true) {
         $this->lexic_permissions['ESCAPE_CHAR'] = ($flag) ? true : false;
@@ -729,7 +723,6 @@ class Highlighter {
      * This method will be remove in 1.2.X
      *
      * @param bool $flag Whether to turn highlighting for brackets on or off
-     * @since 1.0.0
      * @deprecated In favour of set_symbols_highlighting
      */
     function set_brackets_highlighting($flag) {
@@ -740,7 +733,6 @@ class Highlighter {
      * Turns highlighting on/off for symbols
      *
      * @param bool $flag Whether to turn highlighting for symbols on or off
-     * @since 1.0.0
      */
     function set_symbols_highlighting($flag) {
         // Update lexic permissions for this symbol group
@@ -754,7 +746,6 @@ class Highlighter {
      * Turns highlighting on/off for strings
      *
      * @param bool $flag Whether to turn highlighting for strings on or off
-     * @since 1.0.0
      */
     function set_strings_highlighting($flag) {
         $this->lexic_permissions['STRINGS'] = ($flag) ? true : false;
@@ -764,7 +755,6 @@ class Highlighter {
      * Turns highlighting on/off for numbers
      *
      * @param bool $flag Whether to turn highlighting for numbers on or off
-     * @since 1.0.0
      */
     function set_numbers_highlighting($flag) {
         $this->lexic_permissions['NUMBERS'] = ($flag) ? true : false;
@@ -774,7 +764,6 @@ class Highlighter {
      * Turns highlighting on/off for methods
      *
      * @param bool $flag Whether to turn highlighting for methods on or off
-     * @since 1.0.0
      */
     function set_methods_highlighting($flag) {
         $this->lexic_permissions['METHODS'] = ($flag) ? true : false;
@@ -785,7 +774,6 @@ class Highlighter {
      *
      * @param int     $key The key of the regular expression group to turn on or off
      * @param bool    $flag Whether to turn highlighting for the regular expression group on or off
-     * @since 1.0.0
      */
     function set_regexps_highlighting($key, $flag) {
         $this->lexic_permissions['REGEXPS'][$key] = ($flag) ? true : false;
@@ -796,7 +784,6 @@ class Highlighter {
      *
      * @param int $key The key of the keyword group to change the case sensitivity of
      * @param bool $case Whether to check in a case sensitive manner or not
-     * @since 1.0.0
      */
     function set_case_sensitivity($key, $case) {
         $this->language_data['CASE_SENSITIVE'][$key] = ($case) ? true : false;
@@ -810,7 +797,6 @@ class Highlighter {
      *  - GESHI_CAPS_LOWER: convert all keywords to lowercase where found
      *
      * @param int $case A constant specifying what to do with matched keywords
-     * @since 1.0.1
      */
     function set_case_keywords($case) {
         if (in_array($case, array(
@@ -825,7 +811,6 @@ class Highlighter {
      * Widths below zero are ignored
      *
      * @param int $width The tab width
-     * @since 1.0.0
      */
     function set_tab_width($width) {
         $this->tab_width = intval($width);
@@ -841,7 +826,6 @@ class Highlighter {
      * Sets whether or not to use tab-stop width specifed by language
      *
      * @param bool $use Whether to use language-specific tab-stop widths
-     * @since 1.0.7.20
      */
     function set_use_language_tab_width($use) {
         $this->use_language_tab_width = (bool) $use;
@@ -852,7 +836,6 @@ class Highlighter {
      * preference
      *
      * @return int Tab width
-     * @since 1.0.7.20
      */
     function get_real_tab_width() {
         if (!$this->use_language_tab_width ||
@@ -869,7 +852,6 @@ class Highlighter {
      * for more details on strict mode and where to use it.
      *
      * @param bool $mode Whether to enable strict mode or not
-     * @since 1.0.0
      */
     function enable_strict_mode($mode = true) {
         if (GESHI_MAYBE == $this->language_data['STRICT_MODE_APPLIES']) {
@@ -883,7 +865,6 @@ class Highlighter {
      * The optional flag parameter was added in version 1.0.7.21 and can be used
      * to enable (true) or disable (false) all highlighting.
      *
-     * @since 1.0.0
      * @param bool $flag A flag specifying whether to enable or disable all highlighting
      * @todo  Rewrite with array traversal
      */
@@ -906,7 +887,6 @@ class Highlighter {
      *
      * @param string $extension The extension to get a language name for
      * @param array $lookup A lookup array to use instead of the default one
-     * @since 1.0.5
      * @todo Re-think about how this method works (maybe make it private and/or make it
      *       a extension->lang lookup?)
      * @return int|string
@@ -1016,7 +996,6 @@ class Highlighter {
      * @param string $file_name The filename to load the source from
      * @param array  $lookup A lookup array to use instead of the default one
      * @todo Complete rethink of this and above method
-     * @since 1.0.5
      */
     function load_from_file($file_name, $lookup = array()) {
         //@FIXME: rewrite
@@ -1033,7 +1012,6 @@ class Highlighter {
      *
      * @param int    $key The key of the keyword group to add the keyword to
      * @param string $word The word to add to the keyword group
-     * @since 1.0.0
      */
     function add_keyword($key, $word) {
         if (!is_array($this->language_data['KEYWORDS'][$key])) {
@@ -1061,7 +1039,6 @@ class Highlighter {
      *               or the removed keyword will stay in cache and still be highlighted! On the other hand
      *               it might be too expensive to recompile the regexp list for every removal if you want to
      *               remove a lot of keywords.
-     * @since 1.0.0
      */
     function remove_keyword($key, $word, $recompile = true) {
         $key_to_remove = array_search($word, $this->language_data['KEYWORDS'][$key]);
@@ -1082,7 +1059,6 @@ class Highlighter {
      * @param string $styles The styles for the keyword group
      * @param boolean $case_sensitive Whether the keyword group is case sensitive ornot
      * @param array $words The words to use for the keyword group
-     * @since 1.0.0
      * @return bool
      */
     function add_keyword_group($key, $styles, $case_sensitive = true, $words = array()) {
@@ -1108,7 +1084,6 @@ class Highlighter {
      * Removes a keyword group
      *
      * @param int    $key The key of the keyword group to remove
-     * @since 1.0.0
      */
     function remove_keyword_group ($key) {
         //Remove the keyword group internally
@@ -1125,7 +1100,6 @@ class Highlighter {
      * compile optimized regexp list for keyword group
      *
      * @param int   $key The key of the keyword group to compile & optimize
-     * @since 1.0.8
      */
     function optimize_keyword_group($key) {
         $this->language_data['CACHED_KEYWORD_LISTS'][$key] =
@@ -1155,7 +1129,6 @@ class Highlighter {
      * Sets the content of the header block
      *
      * @param string $content The content of the header block
-     * @since 1.0.2
      */
     function set_header_content($content) {
         $this->header_content = $content;
@@ -1165,7 +1138,6 @@ class Highlighter {
      * Sets the content of the footer block
      *
      * @param string $content The content of the footer block
-     * @since 1.0.2
      */
     function set_footer_content($content) {
         $this->footer_content = $content;
@@ -1176,7 +1148,6 @@ class Highlighter {
      * the highlighted code or not
      *
      * @param bool $flag Tells whether to enable or disable this feature
-     * @since 1.0.7.20
      */
     function enable_inner_code_block($flag) {
         $this->force_code_block = (bool)$flag;
@@ -1189,7 +1160,6 @@ class Highlighter {
      * @param string $url The URL to set for the group. If {FNAME} is in
      *               the url somewhere, it is replaced by the keyword
      *               that the URL is being made for
-     * @since 1.0.2
      */
     function set_url_for_keyword_group($group, $url) {
         $this->language_data['URLS'][$group] = $url;
@@ -1199,7 +1169,6 @@ class Highlighter {
      * Sets the target for links in code
      *
      * @param string $target The target for links in the code, e.g. _blank
-     * @since 1.0.3
      */
     function set_link_target($target) {
         if (!$target) {
@@ -1213,7 +1182,6 @@ class Highlighter {
      * Whether CSS IDs should be added to each line
      *
      * @param boolean $flag If true, IDs will be added to each line.
-     * @since 1.0.2
      */
     function enable_ids($flag = true) {
         $this->add_ids = ($flag) ? true : false;
@@ -1230,7 +1198,6 @@ class Highlighter {
      *              If null is specified, the default style is used.
      *              If false is specified, the line will be removed from
      *              special highlighting
-     * @since 1.0.2
      * @todo  Some data replication here that could be cut down on
      */
     function highlight_lines_extra($lines, $style = null) {
@@ -1260,7 +1227,6 @@ class Highlighter {
      * Sets the line-ending
      *
      * @param string $line_ending The new line-ending
-     * @since 1.0.2
      */
     function set_line_ending($line_ending) {
         $this->line_ending = (string)$line_ending;
@@ -1279,7 +1245,6 @@ class Highlighter {
      * so it's not worth doing it the CSS way yet.
      *
      * @param int $number The number to start line numbers at
-     * @since 1.0.2
      */
     function start_line_numbers_at($number) {
         $this->line_numbers_start = abs(intval($number));
@@ -1295,7 +1260,6 @@ class Highlighter {
      * I doubt it.
      *
      * @param string $encoding The encoding to use for the source
-     * @since 1.0.3
      */
     function set_encoding($encoding) {
         if ($encoding) {
@@ -1307,7 +1271,6 @@ class Highlighter {
      * Turns linking of keywords on or off.
      *
      * @param boolean $enable If true, links will be added to keywords
-     * @since 1.0.2
      */
     function enable_keyword_links($enable = true) {
         $this->keyword_links = (bool) $enable;
@@ -1319,7 +1282,6 @@ class Highlighter {
      * stylesheet generators as they rely on some style information being
      * preprocessed
      *
-     * @since 1.0.8
      * @access private
      */
     function build_style_cache() {
@@ -1370,7 +1332,6 @@ class Highlighter {
      * Setup caches needed for parsing. This is automatically called in parse_code() when appropriate.
      * This function makes stylesheet generators much faster as they do not need these caches.
      *
-     * @since 1.0.8
      * @access private
      */
     function build_parse_cache() {
@@ -1541,7 +1502,6 @@ class Highlighter {
      * the same source multiple times, you're better off doing a whole lot of
      * str_replaces to replace the &lt;span&gt;s
      *
-     * @since 1.0.0
      * @return string
      */
     function parse_code () {
@@ -2406,7 +2366,6 @@ class Highlighter {
      * the code is in a pre block...
      *
      * @param  string $result The source to indent (reference!)
-     * @since  1.0.0
      * @access private
      */
     function indent(&$result) {
@@ -2506,7 +2465,6 @@ class Highlighter {
      *
      * @param  string $instr The keyword to change the case of
      * @return string The keyword with its case changed
-     * @since  1.0.0
      * @access private
      */
     function change_case($instr) {
@@ -2525,7 +2483,6 @@ class Highlighter {
      *
      * @param  string $match The keyword to add the Markup to
      * @return string The HTML for the match found
-     * @since  1.0.8
      * @access private
      *
      * @todo   Get rid of ender in keyword links
@@ -2587,7 +2544,6 @@ class Highlighter {
      *
      * @param array $matches the matches array
      * @return string The highlighted string
-     * @since 1.0.8
      * @access private
      */
     function handle_regexps_callback($matches) {
@@ -2602,7 +2558,6 @@ class Highlighter {
      *
      * @param array $matches the matches array
      * @return string
-     * @since 1.0.8
      * @access private
      */
     function handle_multiline_regexps($matches) {
@@ -2634,7 +2589,6 @@ class Highlighter {
      * stuff like keywords, numbers and methods.
      *
      * @param string $stuff_to_parse The string to parse for keyword, numbers etc.
-     * @since 1.0.0
      * @access private
      * @todo BUGGY! Why? Why not build string and return?
      * @return string
@@ -2920,7 +2874,6 @@ class Highlighter {
      *
      * @param string $start_time The time when parsing started
      * @param string $end_time The time when parsing ended
-     * @since 1.0.2
      * @access private
      */
     function set_time($start_time, $end_time) {
@@ -2933,7 +2886,6 @@ class Highlighter {
      * Gets the time taken to parse the code
      *
      * @return double The time taken to parse the code
-     * @since  1.0.2
      */
     function get_time() {
         return $this->time;
@@ -2942,7 +2894,6 @@ class Highlighter {
     /**
      * Merges arrays recursively, overwriting values of the first array with values of later arrays
      *
-     * @since 1.0.8
      * @access private
      */
     function merge_arrays() {
@@ -2983,7 +2934,6 @@ class Highlighter {
      * surrounding it to make it look nice.
      *
      * @param  string $parsed_code The code already parsed (reference!)
-     * @since  1.0.0
      * @access private
      */
     function finalise(&$parsed_code) {
@@ -3170,7 +3120,6 @@ class Highlighter {
      * Creates the header for the code block (with correct attributes)
      *
      * @return string The header for the code block
-     * @since  1.0.0
      * @access private
      */
     function header() {
@@ -3242,7 +3191,6 @@ class Highlighter {
      * Returns the footer for the code block.
      *
      * @return string The footer for the code block
-     * @since  1.0.0
      * @access private
      */
     function footer() {
@@ -3338,7 +3286,6 @@ class Highlighter {
      *                      - ENT_NOQUOTES: escapes only &, < and >
      *                      - ENT_QUOTES:   escapes &, <, >, double and single quotes
      * @return      string  converted string
-     * @since       1.0.7.18
      */
     private static function hsc($string, $quote_style = ENT_COMPAT) {
         // init
@@ -3384,7 +3331,6 @@ class Highlighter {
      *
      * @param int $line The line number information is requested for
      * @access private
-     * @since 1.0.7.21
      * @return null|string
      */
     function get_line_style($line) {
@@ -3411,7 +3357,6 @@ class Highlighter {
     * @param string $regexp_delimiter your regular expression delimiter, @see preg_quote()
     * @return string for regular expression
     * @author Milian Wolff <mail@milianw.de>
-    * @since 1.0.8
     * @access private
     */
     function optimize_regexp_list($list, $regexp_delimiter = '/') {
@@ -3534,7 +3479,6 @@ class Highlighter {
     * @param $recursed bool to know wether we recursed or not
     * @return string
     * @author Milian Wolff <mail@milianw.de>
-    * @since 1.0.8
     * @access private
     */
     function _optimize_regexp_list_tokens_to_string(&$tokens, $recursed = false) {
