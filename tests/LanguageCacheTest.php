@@ -56,4 +56,37 @@ class LanguageCacheTest extends PHPUnit_Framework_TestCase {
             array('bogus', false),
         );
     }
+
+	public function testRegExps() {
+	        $cache = new Chechil\LanguageCache();
+		$list = $cache->getLanguages();
+
+		function checkLanguage( $testcase, $cache, $lang ) {
+			$langData = $cache->get( $lang );
+
+			switch ( $lang ) {
+			case 'dcs':
+			case 'jcl':
+			case 'qml':
+				/* These are currently broken */
+				return;
+			}
+
+			if( isset( $langData['COMMENT_REGEXP'] ) ) {
+				foreach ( $langData['COMMENT_REGEXP'] as $key => $regexp ) {
+					$testcase->assertTrue( @preg_match( $regexp, null ) !== false, 'Invalid COMMENT_REGEXP for: ' . $lang );
+				}
+			}
+			if( isset( $langData['ESCAPE_REGEXP'] ) ) {
+				foreach ( $langData['ESCAPE_REGEXP'] as $key => $regexp ) {
+					$testcase->assertTrue( @preg_match( $regexp, null ) !== false, 'Invalid ESCAPE_REGEXP for: ' . $lang );
+				}
+			}
+		}
+
+		foreach ( $list as $lang ) {
+			checkLanguage( $this, $cache, $lang );
+		}
+
+	}
 }
