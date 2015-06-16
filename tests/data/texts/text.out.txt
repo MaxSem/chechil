@@ -1,6 +1,0 @@
-<pre class="chechil chechil-text">This text file shouldn't really be highlighted that much.
-&nbsp;
-   Roses are red
-   Violets are &lt;font color=&quot;blue&quot;&gt;BLOOD RED&lt;/font&gt;
-&nbsp;
-Amen.</pre>
